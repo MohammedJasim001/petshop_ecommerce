@@ -12,10 +12,9 @@ const AllProuducts = ({ products }) => {
     await AddCarts(e);
     await fetchUserData()
    };
-
   return (
-    <div className="w-[200px] md:w-[300px] flex flex-col shadow-lg bg-white p-2 rounded-lg justify-between md:ml-3 mt-10">
-      <div onClick={() => navigate(`/productdetails/${products.id}`)}>
+    <div className="w-[200px] md:w-[270px] flex flex-col shadow-lg bg-white p-2 rounded-lg justify-between md:ml-3 mt-10">
+      <div onClick={() => navigate(`/productdetails/${products._id}`)}>
         <img
           className="w-[200px] gap-2 rounded-lg m-auto mt-3 h-[200px] "
           src={products.image}
@@ -24,7 +23,7 @@ const AllProuducts = ({ products }) => {
 
         <div className="flex flex-col gap-[10px]  ">
           <h1 className="font-bold text-gray-900">
-            {products.name}
+            {products.title}
           </h1>
           <span className="text-green-600 font-bold">{products.ratings} ★</span>
           <h4 className="text-gray-900 text-lg font-semibold">

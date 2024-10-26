@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Items } from "../MainPage/Main";
 import { toast } from "sonner";
+import axios from "axios";
 
 const SignIn = () => {
   const { users } = useContext(Items);
@@ -21,28 +22,44 @@ const SignIn = () => {
     }
 
     try {
-      const user = users.find((e) => {
-        return e.email === signin.email && e.password === signin.password;
-      });
-      if (!user) {
-        toast.warning("Invalid login details");
-      } else if (user.admin === true) {
-        navigate("/admin/users");
-        localStorage.setItem("admin", true);
-        localStorage.setItem("id", user.id);
-        window.location.reload();
-        toast.success("Login successful");
-      } else {
-        if (!user.blocked) {
-          localStorage.setItem("id", user.id);
-          navigate("/");
-          window.location.reload();
-          toast.success("Login successful");
-        } else {
-          alert("You are blocked");
-        }
+      // const user = users.find((e) => {
+      //   return e.email === signin.email && e.password === signin.password;
+      // });
+      // if (!user) {
+      //   toast.warning("Invalid login details");
+      // } else if (user.admin === true) {
+      //   navigate("/admin/users");
+      //   localStorage.setItem("admin", true);
+      //   localStorage.setItem("id", user.id);
+      //   window.location.reload();
+      //   toast.success("Login successful");
+      // } else {
+      //   if (!user.blocked) {
+      //     localStorage.setItem("id", user.id);
+      //     navigate("/");
+      //     window.location.reload();
+      //     toast.success("Login successful");
+      //   } else {
+      //     alert("You are blocked");
+      //   }
+      // }
+
+      const response = await axios.post('http://localhost:5000/api/users/login',{
+        email:signin.email,
+        password:signin.password
+      })
+
+      if(response.status===201){
+        const {token,user} = response.data
+        localStorage.setItem('token',token)
+        localStorage.setItem('user',JSON.stringify(user))
+
+        navigate('/')
+        toast.success(response.data.message)
       }
+
     } catch (err) {
+      toast.warning(err.response.data.error)
       console.log("Error:", err);
     }
   };

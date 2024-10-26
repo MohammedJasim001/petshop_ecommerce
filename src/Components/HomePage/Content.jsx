@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import cat from "../Assets/catimage.jpg";
@@ -10,10 +10,26 @@ import Footer from "./Footer";
 import luxelife from "../Assets/luxelife.webp";
 import catmain from "../Assets/catmain.webp";
 import dogmain from "../Assets/dogmain.webp";
+import axios from "axios";
 
 const Content = () => {
   const navigate = useNavigate();
-  const { data } = useContext(Items);
+  const [data,setData] = useState([])
+  useEffect(()=>{
+    const products = async () =>{
+      try {
+        const response = await axios.get('http://localhost:5000/api/users/products');
+
+        setData(response?.data?.products)
+        //  setData(Object.values(response.data.products || {}));
+      } catch (error) {
+        console.error('error from fetching product',error)
+      }
+    }
+    products()
+  
+  },[])
+  
 
   return (
     <div>
@@ -67,7 +83,7 @@ const Content = () => {
 
         <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-6  pt-10 md:mx-10">
           {data.slice(0, 12).map((product) => (
-            <Products key={product.id} product={product} />
+            <Products key={product._id} product={product} />
           ))}
         </div>
       </div>
@@ -84,12 +100,12 @@ const Content = () => {
             .map((best, index) => (
               <div key={index} className="">
                 <div
-                  className="flex flex-col shadow-lg bg-white p-2 rounded-lg justify-around md:ml-3 items-center gap-3 mb-5 w-[200px] md:w-[250px] h-[300px]"
-                  onClick={() => navigate(`/productdetails/${best.id}`)}
+                  className="flex flex-col shadow-lg bg-white p-2 rounded-lg justify-around items-center gap-3 mb-5 w-[200px] md:w-[230px] h-[300px]"
+                  onClick={() => navigate(`/productdetails/${best._id}`)}
                 >
                   <img
                     className="w-[200px] gap-2 rounded-lg m-auto mt-3 h-[200px]"
-                    src={best.image}
+                    src={best.title}
                     alt=""
                   />
 

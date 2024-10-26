@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router'
 import Home from '../HomePage/Home'
 import Registration from '../Registration/Registration'
-import SignIn from '../Registration/SignIn'
+import SignIn from '../Registration/Login'
 import Cart from '../Cart/Cart'
 import Cat from '../ProductsCat/Cat'
 import Dog from '../ProductsDog/Dog'
@@ -23,15 +23,18 @@ const Main = () => {
 const [data,setData]=useState([])
 const [users,setUsers]=useState([])
 const [cartCount,setCartCount]=useState([])
-useEffect(()=>{
-  axios.get('http://localhost:3000/products')
+// useEffect(()=>{
+//   const products = async () =>{
+//     try {
+//       const response = await axios.get('http://localhost:5000/api/users/products')
+//       setData(response.data)
+//     } catch (error) {
+//       console.error('error from fetching product',error)
+//     }
+//   }
+//   products()
 
-    .then(res=>{
-      setData(res.data)
-    })
-    .catch(err=>console.log(err))
-
-},[])
+// },[setData])
 useEffect(()=>{
   axios.get("http://localhost:3000/users")
     .then(res=>{
@@ -43,7 +46,7 @@ useEffect(()=>{
 
 
   const fetchUserData = async () => {
-    const userId = localStorage.getItem("id");
+    const userId = localStorage.getItem("user");
     try {
       const response = await axios.get(`http://localhost:3000/users/${userId}`);
       setCartCount(response.data.cart);
@@ -72,7 +75,7 @@ useEffect(()=>{
         <Route path='/cat' element={<Cat />}/>
         <Route path='/dog' element={<Dog/>}/>
         <Route path='/allproducts' element={<All/>}/>
-        <Route path='/productdetails/:userId' element={<ProductLists/>}/>
+        <Route path='/productdetails/:id' element={<ProductLists/>}/>
         <Route path='/buynow' element={<BuyNow/>}/>
         <Route path='/orders' element={<Orders/>}/>
         <Route path='*' element={<NonofThis/>}/>

@@ -19,10 +19,15 @@ const Navbar = () => {
   const [isDrop, setIsDrop] = useState(false);
   const [theUser, setTheUser] = useState([]);
 
+  const user = localStorage.getItem('user')
+  const userId = JSON.parse(user)
+
+  console.log(userId._id,'jjjjjjjjjjakjd')
   const fetchUser = async () => {
-    const userId = localStorage.getItem("id");
+    
     try {
-      const response = await axios.get(`http://localhost:3000/users/${userId}`);
+      const response = await axios.get(`http://localhost:5000/api/users/${userId._id}/cart`);
+      console.log(response,'hahahahaha')
       setTheUser(response.data);
     } catch (err) {
       console.log(err);
@@ -61,19 +66,19 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("id")) {
+    if (localStorage.getItem("user")) {
       setIsLogine(true);
     }
   }, [isLogine]);
 
-  const results = data.filter((product) => {
-    return (
-      input &&
-      product &&
-      product.name &&
-      product.name.toLowerCase().includes(input.toLowerCase())
-    );
-  });
+  // const results = data.filter((product) => {
+  //   return (
+  //     input &&
+  //     product &&
+  //     product.name &&
+  //     product.name.toLowerCase().includes(input.toLowerCase())
+  //   );
+  // });
 
   const handleChange = (e) => {
     setInput(e.target.value);
@@ -181,7 +186,7 @@ const Navbar = () => {
         </div>
       )}
       <div>
-        <SearchResults results={results} setInput={setInput} />
+        {/* <SearchResults results={results} setInput={setInput} /> */}
       </div>
     </div>
   );

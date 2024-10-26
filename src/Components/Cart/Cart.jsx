@@ -37,18 +37,23 @@ const Cart = () => {
     setCart((prevCart) => prevCart.filter((e) => e.id !== item.id));
   };
 
+  const user = localStorage.getItem('user')
+  const userId = JSON.parse(user)
+
+  console.log(userId._id,'jjjjjjjjjjakjd')
+  const fetchUser = async () => {
+    
+    try {
+      const response = await axios.get(`http://localhost:5000/api/users/${userId._id}/cart`);
+      console.log(response,'hahahahaha')
+      setCart(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
-    const user = localStorage.getItem("id");
-    axios
-      .get(`http://localhost:3000/users/${user}`)
-      .then((res) => {
-        const cartWithCount = Object.values(res.data.cart).map((item) => ({
-          ...item,
-          count: item.count || 1,
-        }));
-        setCart(cartWithCount);
-      })
-      .catch((err) => console.log(err));
+    fetchUser();
   }, []);
 
   const totalPrice = cart.reduce(
