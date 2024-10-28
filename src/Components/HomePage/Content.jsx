@@ -11,6 +11,7 @@ import luxelife from "../Assets/luxelife.webp";
 import catmain from "../Assets/catmain.webp";
 import dogmain from "../Assets/dogmain.webp";
 import axios from "axios";
+import api from "../../utils/axiosConfig";
 
 const Content = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Content = () => {
   useEffect(()=>{
     const products = async () =>{
       try {
-        const response = await axios.get('http://localhost:5000/api/users/products');
+        const response = await api.get('/users/products');
 
         setData(response?.data?.products)
         //  setData(Object.values(response.data.products || {}));

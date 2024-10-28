@@ -14,15 +14,17 @@ import Orders from '../HomePage/Orders'
 import NonofThis from './NonofThis'
 import About from '../HomePage/Pages/About'
 import Contact from '../HomePage/Pages/Contact'
+import api from '../../utils/axiosConfig'
 
 export const Items=createContext()
 
 const Main = () => {
   
-
+const [refresh,setRefresh] = useState(false)
 const [data,setData]=useState([])
 const [users,setUsers]=useState([])
 const [cartCount,setCartCount]=useState([])
+const [cart,setCart] = useState([])
 // useEffect(()=>{
 //   const products = async () =>{
 //     try {
@@ -44,19 +46,25 @@ useEffect(()=>{
 },[])
 
 
+const user = localStorage.getItem('user')
+  const userId = JSON.parse(user)._id
+const fetchUser = async () => {
+    
+  try {
+    const response =  await api.get(`/users/${userId}/cart`)
+    console.log(response,'hahahahaha')
+    setCart(response.data);
+    setRefresh(!refresh)
+    console.log(response.data);
+    
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-  const fetchUserData = async () => {
-    const userId = localStorage.getItem("user");
-    try {
-      const response = await axios.get(`http://localhost:3000/users/${userId}`);
-      setCartCount(response.data.cart);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+useEffect(() => {
+  fetchUser();
+}, []);
 
 
 
@@ -64,7 +72,7 @@ useEffect(()=>{
   return (
     <div className='bg-slate-100'>
        
-      <Items.Provider value={{data, setData,users,setUsers,cartCount,setCartCount,fetchUserData}}>
+      <Items.Provider value={{data, setData,users,setUsers,cartCount,setCartCount,fetchUser,cart,setCart}}>
       
       <Routes>
       

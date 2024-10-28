@@ -1,19 +1,30 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { AddCarts } from "./Addcart";
 import { toast } from "sonner";
 import { Items } from "../MainPage/Main";
+import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa";
 
 const AllProuducts = ({ products }) => {
   const navigate = useNavigate();
-  const {fetchUserData} = useContext(Items)
+  const [wish,setWish] = useState(false)
+
+  const wishController = ()=>{
+    wish==false?
+    setWish(true):
+    setWish(false)
+  }
  
   const handleCarts = async(e) => {
     await AddCarts(e);
-    await fetchUserData()
    };
   return (
-    <div className="w-[200px] md:w-[270px] flex flex-col shadow-lg bg-white p-2 rounded-lg justify-between md:ml-3 mt-10">
+    <div className="w-[200px] md:w-[270px] flex flex-col shadow-lg bg-white p-2 rounded-lg justify-between md:ml-3 mt-10 relative">
+      {!wish?<div onClick={wishController} className="absolute right-3 text-red-600 text-2xl "><CiHeart /></div>:
+      <div onClick={wishController} className="absolute right-3 text-red-600 text-2xl "><FaHeart /></div>
+
+      }
       <div onClick={() => navigate(`/productdetails/${products._id}`)}>
         <img
           className="w-[200px] gap-2 rounded-lg m-auto mt-3 h-[200px] "

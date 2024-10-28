@@ -5,12 +5,19 @@ import { AddCarts } from "../AllProducts/Addcart";
 import Navbar from "../HomePage/Navbar";
 import Footer from "../HomePage/Footer";
 import { Items } from "../MainPage/Main";
+import { FaHeart } from "react-icons/fa";
+import { CiHeart } from "react-icons/ci";
 
 const ProductLists = () => {
   const { id } = useParams();
   const [items, setItems] = useState([]);
   const { fetchUserData } = useContext(Items);
   const [product,setProduct] = useState([])
+  const [wish,setWish] = useState(false)
+
+  const wishlistController = ()=>{
+    wish?setWish(false):setWish(true)
+  }
 
   const handleCarts = async (e) => {
     await AddCarts(e);
@@ -37,12 +44,16 @@ const ProductLists = () => {
   return (
     <div>
       <Navbar />
-      <div className="p-4 md:p-8 bg-gray-100">
+      <div className="p-4 md:p-8 bg-gray-100 ">
+        
         
           <div
             key={product._id}
-            className="bg-white rounded-lg shadow-lg md:mx-20 mx-5 my-10 p-6 flex flex-col md:flex-row gap-10 items-center justify-around"
+            className="bg-white relative rounded-lg shadow-lg md:mx-20 mx-5 my-10 p-6 flex flex-col md:flex-row gap-10 items-center justify-around"
           >
+            {wish?<div onClick={wishlistController} className="absolute right-5 top-5 text-red-600 text-4xl"><FaHeart/></div>:
+            <div onClick={wishlistController} className="absolute right-5 top-5 text-red-600 text-4xl"><CiHeart/></div>
+            }
             {/* Product Image */}
             <div className="flex-1 max-w-sm md:max-w-md">
               <img

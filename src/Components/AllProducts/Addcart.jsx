@@ -1,24 +1,17 @@
-import axios from "axios";
 import { toast } from "sonner";
+import api from "../../utils/axiosConfig";
 
 export const AddCarts = async (e) => {
   console.log(e,'jjjjaja')
-  if(e==="a"){
-    return 0
-  }
-  
+
+
   const user = localStorage.getItem("user");
-  const userId =JSON.parse(user)
+  const userId =JSON.parse(user)._id
+
   if (user) {
     try {
-      const token = localStorage.getItem('token')
       
-      const res = await axios.post(`http://localhost:5000/api/users/${userId}/cart/${e._id}`,{},
-      // const cart = res.data.cart;
-
-      {headers:{
-        Authorization:`${token}`
-      }})
+      const res = await api.post(`/users/${userId}/cart/${e._id}`,{})
 
       toast.success(res.data.message)
 
@@ -39,7 +32,8 @@ export const AddCarts = async (e) => {
     //     cart: updateCart,
     //   });
     } catch (err) {
-      console.log(err);
+      toast.warning(err.response.data.message)
+      console.log(err.response.data.message);
     }
   } else {
     toast.warning("pleas LogIn");
@@ -47,13 +41,18 @@ export const AddCarts = async (e) => {
 };
 
 export const RemovCart = async (e) => {
-  const user = localStorage.getItem("id");
+  console.log(e._id,'product id from remve cart')
+  const user = localStorage.getItem("user");
+  const userId = JSON.parse(user)._id
+  console.log(userId);
+  
   try {
-    const res = await axios.get(`http://localhost:3000/users/${user}`);
-    const cart = res.data.cart;
-    const { [e.id]: remove, ...news } = cart;
-    await axios.patch(`http://localhost:3000/users/${user}`, { cart: news });
+    const res = await api.delete(`/users/${userId}/cart/${e.productId._id}/removecart`);
+    
+    toast.success(res.data.message)
+    
   } catch (err) {
-    console.log(err);
+    console.log(err.response.data.error);
+    toast.error(err.response.data.error)
   }
 };

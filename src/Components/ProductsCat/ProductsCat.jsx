@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router";
 import { Items } from "../MainPage/Main";
 import { AddCarts } from "../AllProducts/Addcart";
+import { FaHeart } from "react-icons/fa";
 
 const ProductsCat = ({ products }) => {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ const ProductsCat = ({ products }) => {
    };
 
   return (
-    <div className="w-[200px] md:w-[270px] flex flex-col shadow-lg bg-white p-2 rounded-lg justify-between mt-10 ">
+    <div className="w-[200px] md:w-[270px] flex flex-col shadow-lg bg-white p-2 rounded-lg justify-between mt-10 relative">
+      <div className="absolute right-3 text-red-500 text-2xl"><FaHeart /></div>
       <div onClick={() => navigate(`/productdetails/${products.id}`)}>
         <img
           className="w-[200px] gap-2 rounded-lg m-auto mt-3 h-[200px] mb-3"

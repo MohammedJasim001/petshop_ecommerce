@@ -5,40 +5,41 @@ import SearchResults from "./SearchResults";
 import { FaCartPlus } from "react-icons/fa";
 import { MdLogout, MdVerified, MdAccountCircle } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
-import axios from "axios";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 import icon from "../Assets/icon.png";
 import { FaPaw, FaSmile, FaHeart } from "react-icons/fa";
+import api from "../../utils/axiosConfig";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { data, cartCount } = useContext(Items);
+  const {cart,setCart} = useContext(Items)
   const [input, setInput] = useState("");
   const [isLogine, setIsLogine] = useState(false);
   const [isDrop, setIsDrop] = useState(false);
   const [theUser, setTheUser] = useState([]);
 
-  const user = localStorage.getItem('user')
-  const userId = JSON.parse(user)
+ 
+  //   const user = localStorage.getItem('user')
+  //   const userId = JSON.parse(user)._id
+  // const fetchUser = async () => {
+      
+  //   try {
+  //     const response =  await api.get(`/users/${userId}/cart`)
+  //     console.log(response,'hahahahaha')
+  //     setCart(response.data);
+  //     console.log(response.data);
+      
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  
+  // useEffect(() => {
+  //   fetchUser();
+  // },[]);
 
-  console.log(userId._id,'jjjjjjjjjjakjd')
-  const fetchUser = async () => {
-    
-    try {
-      const response = await axios.get(`http://localhost:5000/api/users/${userId._id}/cart`);
-      console.log(response,'hahahahaha')
-      setTheUser(response.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  const cartCountSettings = Object.keys(cartCount).length;
+  const cartCountSettings = cart.length;
 
   const handleLogout = () => {
     Swal.fire({
