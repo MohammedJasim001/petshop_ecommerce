@@ -39,7 +39,7 @@ const Navbar = () => {
   //   fetchUser();
   // },[]);
 
-  const cartCountSettings = cart.length;
+  const cartCountSettings =cart.length==0?0: cart.length;
 
   const handleLogout = () => {
     Swal.fire({
@@ -127,6 +127,20 @@ const Navbar = () => {
             </Link>
           ) : (
             <FaCartPlus
+              onClick={() => toast.warning("Please Login")}
+              className="text-2xl md:text-4xl text-white ml-2"
+            />
+          )}
+
+          {isLogine ? (
+            <Link to="/wishlist" className="relative flex items-center">
+              <FaHeart className="text-2xl md:text-4xl text-white mr-2" />
+              <span className="absolute -top-2 -right-2 rounded-full bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center">
+                {cartCountSettings}
+              </span>
+            </Link>
+          ) : (
+            <FaHeart
               onClick={() => toast.warning("Please Login")}
               className="text-2xl md:text-4xl text-white ml-2"
             />

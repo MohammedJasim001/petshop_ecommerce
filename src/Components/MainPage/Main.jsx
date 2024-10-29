@@ -15,6 +15,7 @@ import NonofThis from './NonofThis'
 import About from '../HomePage/Pages/About'
 import Contact from '../HomePage/Pages/Contact'
 import api from '../../utils/axiosConfig'
+import Wishlist from '../Wishlist/wishlistView'
 
 export const Items=createContext()
 
@@ -47,11 +48,11 @@ useEffect(()=>{
 
 
 const user = localStorage.getItem('user')
-  const userId = JSON.parse(user)._id
+  const userId = JSON.parse(user)
 const fetchUser = async () => {
     
   try {
-    const response =  await api.get(`/users/${userId}/cart`)
+    const response =  await api.get(`/users/${userId._id}/cart`)
     console.log(response,'hahahahaha')
     setCart(response.data);
     setRefresh(!refresh)
@@ -79,6 +80,7 @@ useEffect(() => {
         <Route path='/' element={<Home/>}/>
         <Route path='/registration' element={<Registration/>}/>
         <Route path='/signin' element={<SignIn/>}/>
+        <Route path='/wishlist' element ={<Wishlist/>}/>
         <Route path='/cart' element={<Cart/>}/>
         <Route path='/cat' element={<Cat />}/>
         <Route path='/dog' element={<Dog/>}/>
