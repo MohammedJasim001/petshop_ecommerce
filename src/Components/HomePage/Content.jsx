@@ -106,11 +106,11 @@ const Content = () => {
                 >
                   <img
                     className="w-[200px] gap-2 rounded-lg m-auto mt-3 h-[200px]"
-                    src={best.title}
+                    src={best.image}
                     alt=""
                   />
 
-                  <h1 className="font-bold text-gray-900 ">{best.name}</h1>
+                  <h1 className="font-bold text-gray-900 ">{best.title}</h1>
                 </div>
               </div>
             ))}

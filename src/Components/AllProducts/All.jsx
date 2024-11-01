@@ -16,8 +16,6 @@ const All = () => {
     const products = async () =>{
       try {
         const response = await api.get('users/products');
-
-        console.log(response.data.products,'im suhiab');
         setData(response?.data?.products)
       } catch (error) {
         console.error('error from fetching product',error)
@@ -26,9 +24,6 @@ const All = () => {
     products()
   
   },[])
-
-  
- console.log(data,'hey ');
  
   return (
     <div>

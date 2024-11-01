@@ -7,21 +7,25 @@ import Footer from "../HomePage/Footer";
 import { Items } from "../MainPage/Main";
 import { FaHeart } from "react-icons/fa";
 import { CiHeart } from "react-icons/ci";
+import { toast } from "sonner";
+import api from "../../utils/axiosConfig";
+import { addWishlist, getWishlist, removeWishlist } from "../Wishlist/wishlist";
 
 const ProductLists = () => {
   const { id } = useParams();
-  const [items, setItems] = useState([]);
-  const { fetchUserData } = useContext(Items);
   const [product,setProduct] = useState([])
   const [wish,setWish] = useState(false)
 
-  const wishlistController = ()=>{
-    wish?setWish(false):setWish(true)
-  }
+  const user = localStorage.getItem('user')
+
 
   const handleCarts = async (e) => {
-    await AddCarts(e);
-    await fetchUserData();
+    if(user){
+      await AddCarts(e);
+    }else{
+      toast.warning('Please Login abcdefg')
+    }
+    
   };
 
   console.log('Requested ID:', id);
@@ -29,18 +33,45 @@ const ProductLists = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/users/products/${id}`);
+        const response = await api.get(`users/products/${id}`);
         setProduct(response.data.product); 
         console.log(response.data.product,'response')
       } catch (error) {
         console.error('Error fetching product:', error);
       }
     };
-
     fetchProduct();
+
+    if(user){
+      const checkWishlist = async ()=>{
+        const wishlist = await getWishlist ()
+  
+        const isInWishlist = Array.isArray(wishlist) && wishlist.length > 0? wishlist.find(item => item._id ===id) : null
+        setWish(isInWishlist);
+  
+      }
+      checkWishlist()
+    }
+
   }, [id]);
   console.log(product.title,'akdsjf')
 
+  const wishController = (e) => {
+    if(user){
+      if (wish) {
+        removeWishlist(e);
+    } else {
+        addWishlist(e);
+    }
+    setWish(!wish)
+    }
+    else{
+      toast.warning('Please Loginaksdfl',)
+    }
+  }
+
+  console.log(product._id,id);
+  
   return (
     <div>
       <Navbar />
@@ -51,8 +82,8 @@ const ProductLists = () => {
             key={product._id}
             className="bg-white relative rounded-lg shadow-lg md:mx-20 mx-5 my-10 p-6 flex flex-col md:flex-row gap-10 items-center justify-around"
           >
-            {wish?<div onClick={wishlistController} className="absolute right-5 top-5 text-red-600 text-4xl"><FaHeart/></div>:
-            <div onClick={wishlistController} className="absolute right-5 top-5 text-red-600 text-4xl"><CiHeart/></div>
+            {wish?<div onClick={()=>wishController(product._id)} className="absolute right-5 top-5 text-red-600 text-4xl"><FaHeart/></div>:
+            <div onClick={()=>wishController(product._id)} className="absolute right-5 top-5 text-red-600 text-4xl"><CiHeart/></div>
             }
             {/* Product Image */}
             <div className="flex-1 max-w-sm md:max-w-md">

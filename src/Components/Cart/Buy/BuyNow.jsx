@@ -4,11 +4,18 @@ import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router";
 import Footer from "../../HomePage/Footer";
 import Navbar from "../../HomePage/Navbar";
+import api from "../../../utils/axiosConfig";
 
 const BuyNow = () => {
   const navigate=useNavigate()
   const location = useLocation();
   const { totalPrice, totalItem, cart } = location.state;
+
+
+  if(totalPrice===null){
+    navigate('*')
+  }
+  
   
   const [formData, setFormData] = useState({
     name: "",
@@ -81,9 +88,89 @@ const BuyNow = () => {
     });
   };
 
-  const handleClick = (productData,totalPrice) => {
-    if (validate()) {
-      AddBuy(productData,totalPrice, formData); 
+ // razorpay payment session
+ const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
+};
+
+  const handleSubmit =async (productData,totalPrice) => {
+    if (validate()) { 
+      
+      const user = localStorage.getItem("user");
+      const userId = JSON.parse(user)
+    
+      const scriptLoaded = await loadRazorpayScript()
+      if(!scriptLoaded){
+        return toast.warning('Faild to load')
+      }
+    
+      const orderResult = await api.post(`/users/payment/${userId._id}`,{
+        amount:totalPrice
+      })
+      
+
+      const {amount,id,currency} = orderResult.data
+
+      
+
+      const options = {
+        key: "rzp_test_o7wNNPWHCqZm5Q",
+        amount: amount.toString(),
+        currency: currency,
+        name: "Acme Corp",
+        description: "Test Transaction",
+        image: "https://example.com/your_logo",
+        order_id: id,
+        handler: async function (response) {
+
+          // Step 2: Verify payment
+          const paymentData = {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+  
+          };
+          
+          const verify = await api.post('/users/verifypayment',paymentData)
+        },
+  //saveOrder
+
+        prefill: {
+          name: "Gaurav Kumar",
+          email: "gaurav.kumar@example.com",
+          contact: "9000090000",
+        },
+        notes: {
+          address: "Razorpay Corporate Office",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      const rzp1 = new window.Razorpay(options);
+      rzp1.on("payment.failed", function (response) {
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+      });
+
+      rzp1.open()
+
+
      navigate('/')
     } 
   };
@@ -95,7 +182,7 @@ const BuyNow = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleClick(cart,totalPrice);
+          handleSubmit(cart,totalPrice);
         }}
         className="w-[40vw] p-6 bg-white shadow-lg rounded-lg"
       >

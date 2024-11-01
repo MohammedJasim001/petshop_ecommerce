@@ -8,6 +8,8 @@ import dog from '../Assets/dog.webp'
 
 const Dog = () => {
   const {data} = useContext(Items)
+  console.log(data);
+  
   return (
     <div >
       <Navbar/>
@@ -17,8 +19,8 @@ const Dog = () => {
             src={dog} alt="" />
         </div>
     <div className='grid grid-cols-2 md:grid-cols-5 md:pt-10 md:mx-10'>
-      {data.filter((item)=>item.category==='Dog').map((dogproducts)=>(
-        <DogProducts key={dogproducts.id} products={dogproducts}/>
+      {data?.products?.filter((item)=>item.category==='Dog').map((dogproducts)=>(
+        <DogProducts key={dogproducts._id} products={dogproducts}/>
       ))}
     </div>
       <Footer/>

@@ -10,24 +10,21 @@ import api from "../../utils/axiosConfig";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
-  const [refresh,setRefresh] = useState(false)
   const navigate = useNavigate();
 
   const handleRemove = async (item) => {
     await RemovCart(item);
-    setRefresh(!refresh)
+    setCart((prevCart) => prevCart.filter((cartItem) => cartItem.productId._id !== item.productId._id));
     console.log(item)
   };
 
 
   const user = localStorage.getItem('user')
   const userId = JSON.parse(user)._id
-  console.log(userId,'jjjjjjjjjjakjd')
   const fetchUser = async () => {
     
     try {
       const response =  await api.get(`/users/${userId}/cart`)
-      console.log(response,'hahahahaha')
       setCart(response.data);
       console.log(response.data);
       
@@ -38,37 +35,48 @@ const Cart = () => {
 
   useEffect(() => {
     fetchUser();
-  }, [refresh]);
+  },[]);
 
-  const clickIncrease = async(id)=>{
+  const clickIncrease = async(item)=>{
     try {
-      const res = await api.put(`/users/${userId}/cart/${id.productId._id}/increment`)
+      const res = await api.put(`/users/${userId}/cart/${item.productId._id}/increment`)
       console.log(res.data.message)
-      setRefresh(!refresh)
+      setCart((prevCart) =>
+        prevCart.map((cartItem) =>
+          cartItem.productId._id === item.productId._id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        )
+      );
     } catch (error) {
       console.log(error.response.data.message)
     }
   }
-  const clickDecrease = async(id)=>{
+  const clickDecrease = async(item)=>{
     try {
-      const res = await api.put(`/users/${userId}/cart/${id.productId._id}/decrement`)
+      const res = await api.put(`/users/${userId}/cart/${item.productId._id}/decrement`)
       console.log(res.data.message)
-      setRefresh(!refresh)
+      setCart((prevCart) =>
+        prevCart.map((cartItem) =>
+          cartItem.productId._id === item.productId._id
+            ? { ...cartItem, quantity: cartItem.quantity - 1 }
+            : cartItem
+        )
+      );
     } catch (error) {
       console.log(error.response.data.message)
     }
   }
   console.log(cart);
 
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.productId.price * item.quantity,
-    0
-  );
-  console.log(totalPrice);
-  console.log(cart.length,'jkjsssssssssssssss');
-  
-  
-  const totalItem = cart.reduce((acc, item) => acc + item.quantity, 0);
+const totalPrice = Array.isArray(cart) && cart.length > 0
+? cart.reduce((acc, item) => acc + item.productId.price * item.quantity, 0)
+: 0;
+
+const totalItem = Array.isArray(cart) && cart.length > 0
+? cart.reduce((acc, item) => acc + item.quantity, 0)
+: 0;
+
 
   console.log(totalItem);
   

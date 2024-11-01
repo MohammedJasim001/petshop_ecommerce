@@ -9,37 +9,29 @@ import { toast } from "sonner";
 import Swal from "sweetalert2";
 import icon from "../Assets/icon.png";
 import { FaPaw, FaSmile, FaHeart } from "react-icons/fa";
-import api from "../../utils/axiosConfig";
+
 
 const Navbar = () => {
+  
+
+  const {cartCount,wishlistCount,updateCartCount,updateWishlistCount} = useContext(Items)
   const navigate = useNavigate();
-  const {cart,setCart} = useContext(Items)
   const [input, setInput] = useState("");
   const [isLogine, setIsLogine] = useState(false);
   const [isDrop, setIsDrop] = useState(false);
   const [theUser, setTheUser] = useState([]);
 
- 
-  //   const user = localStorage.getItem('user')
-  //   const userId = JSON.parse(user)._id
-  // const fetchUser = async () => {
-      
-  //   try {
-  //     const response =  await api.get(`/users/${userId}/cart`)
-  //     console.log(response,'hahahahaha')
-  //     setCart(response.data);
-  //     console.log(response.data);
-      
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-  
-  // useEffect(() => {
-  //   fetchUser();
-  // },[]);
+  const user = localStorage.getItem('user')
+  const userDetails = JSON.parse(user)
+  console.log(userDetails.userName);
 
-  const cartCountSettings =cart.length==0?0: cart.length;
+  useEffect(() => {
+    if (user) {
+      setIsLogine(true);
+      updateCartCount()
+      updateWishlistCount()
+    }
+  }, [wishlistCount,cartCount]);
 
   const handleLogout = () => {
     Swal.fire({
@@ -65,21 +57,6 @@ const Navbar = () => {
       }
     });
   };
-
-  useEffect(() => {
-    if (localStorage.getItem("user")) {
-      setIsLogine(true);
-    }
-  }, [isLogine]);
-
-  // const results = data.filter((product) => {
-  //   return (
-  //     input &&
-  //     product &&
-  //     product.name &&
-  //     product.name.toLowerCase().includes(input.toLowerCase())
-  //   );
-  // });
 
   const handleChange = (e) => {
     setInput(e.target.value);
@@ -122,7 +99,7 @@ const Navbar = () => {
             <Link to="/cart" className="relative flex items-center">
               <FaCartPlus className="text-2xl md:text-4xl text-white mr-2" />
               <span className="absolute -top-2 -right-2 rounded-full bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center">
-                {cartCountSettings}
+               {cartCount}
               </span>
             </Link>
           ) : (
@@ -136,7 +113,7 @@ const Navbar = () => {
             <Link to="/wishlist" className="relative flex items-center">
               <FaHeart className="text-2xl md:text-4xl text-white mr-2" />
               <span className="absolute -top-2 -right-2 rounded-full bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center">
-                {cartCountSettings}
+                {wishlistCount}
               </span>
             </Link>
           ) : (
@@ -155,7 +132,8 @@ const Navbar = () => {
                 className="rounded-full bg-blue-950 w-[25px] md:w-[40px] h-[25px] md:h-[40px] text-white md:text-xl"
                 onClick={handleDrop}
               >
-                {theUser.name ? theUser.name.trim().toUpperCase()[0] : ""}
+                {userDetails.image?<img src={userDetails.image} alt="" className="rounded-full w-[25px] md:w-[40px] h-[25px] md:h-[40px]"/>
+                :userDetails.userName ? userDetails.userName.trim().toUpperCase()[0] : ""}
               </button>
             </div>
           ) : (
@@ -169,15 +147,16 @@ const Navbar = () => {
       {isDrop && isLogine && (
         <div className="bg-gray-400 fixed right-5 w-[250px] h-[270px] top-20 rounded-md flex flex-col items-center justify-around shadow-lg p-4 z-50">
           <div className="rounded-full bg-blue-950 w-[60px] h-[60px] flex items-center justify-center text-white text-2xl shadow-md">
-            {theUser.name ? theUser.name.trim().toUpperCase()[0] : ""}
+                {userDetails.image?<img src={userDetails.image} alt="" className="rounded-full w-[60px] h-[60px]"/>
+                :userDetails.userName ? userDetails.userName.trim().toUpperCase()[0] : ""}
           </div>
 
           <div className="flex flex-col items-center space-y-1 pt-3">
             <div className="text-xl font-sans font-semibold text-gray-900">
-              Hi, {theUser.name}
+              Hi, {userDetails.userName}
             </div>
             <div className="text-lg font-sans font-medium text-gray-800">
-              {theUser.email}
+              {userDetails.email}
             </div>
           </div>
           <div>

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 const Products = ({ product }) => {
   const navigate = useNavigate();
+  
 
   return (
     <div className="">

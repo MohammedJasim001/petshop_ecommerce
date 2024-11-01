@@ -1,25 +1,22 @@
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import React, { useEffect, useState } from "react";
 import Navbar from "../HomePage/Navbar";
 import Footer from "../HomePage/Footer";
-import { Items } from "../MainPage/Main";
 import api from "../../utils/axiosConfig";
 import { removeWishlist } from "./wishlist";
 
 const Wishlist = () => {
   const [wishItem,setWishItem] = useState([])
-  const [refresh,setRefresh] = useState([])
 
   const user = localStorage.getItem('user')
   const userId = JSON.parse(user)._id
-  console.log(userId);
+  console.log();
   
   console.log(wishItem);
-  const handleRemove=async(e)=>{
-   await removeWishlist(e)
-    setRefresh(!refresh)
+  const handleRemove = async(productId)=>{
+   await removeWishlist(productId)
+   setWishItem((prevWishItems) =>
+    prevWishItems.filter((wish) => wish.productId._id !== productId)
+  );
   }
 
   const wishlistItems = async ()=>{
@@ -36,8 +33,9 @@ const Wishlist = () => {
   useEffect(()=>{
     wishlistItems()
 
-  },[refresh])
+  },[])
 
+  console.log(wishItem)
 
   return (
     <div>

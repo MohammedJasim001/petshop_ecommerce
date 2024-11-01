@@ -16,6 +16,8 @@ import About from '../HomePage/Pages/About'
 import Contact from '../HomePage/Pages/Contact'
 import api from '../../utils/axiosConfig'
 import Wishlist from '../Wishlist/wishlistView'
+import { getWishlist } from '../Wishlist/wishlist'
+import { getCart } from '../AllProducts/Addcart'
 
 export const Items=createContext()
 
@@ -24,48 +26,41 @@ const Main = () => {
 const [refresh,setRefresh] = useState(false)
 const [data,setData]=useState([])
 const [users,setUsers]=useState([])
-const [cartCount,setCartCount]=useState([])
 const [cart,setCart] = useState([])
-// useEffect(()=>{
-//   const products = async () =>{
-//     try {
-//       const response = await axios.get('http://localhost:5000/api/users/products')
-//       setData(response.data)
-//     } catch (error) {
-//       console.error('error from fetching product',error)
-//     }
-//   }
-//   products()
+const [cartCount, setCartCount] = useState(0);
+const [wishlistCount, setWishlistCount] = useState(0);
 
-// },[setData])
-useEffect(()=>{
-  axios.get("http://localhost:3000/users")
-    .then(res=>{
-      setUsers(res.data)
-    })
-    .catch(err=>console.log(err))
-},[])
-
-
-const user = localStorage.getItem('user')
-  const userId = JSON.parse(user)
-const fetchUser = async () => {
-    
+const updateWishlistCount = async () => {
   try {
-    const response =  await api.get(`/users/${userId._id}/cart`)
-    console.log(response,'hahahahaha')
-    setCart(response.data);
-    setRefresh(!refresh)
-    console.log(response.data);
-    
-  } catch (err) {
-    console.log(err);
+    const count = await getWishlist();
+    setWishlistCount(count.length || 0);
+  } catch (error) {
+    console.error("Error updating wishlist count:", error);
   }
 };
 
-useEffect(() => {
-  fetchUser();
-}, []);
+const updateCartCount = async () => {
+  try {
+    const count = await getCart();
+    setCartCount(count.length || 0);
+  } catch (error) {
+    console.error("Error updating cart count:", error);
+  }
+};
+
+useEffect(()=>{
+  const products = async () =>{
+    try {
+      const response = await axios.get('http://localhost:5000/api/users/products')
+      setData(response.data)
+    } catch (error) {
+      console.error('error from fetching product',error)
+    }
+  }
+  products()
+  updateWishlistCount();
+  updateCartCount();
+},[setData])
 
 
 
@@ -73,7 +68,18 @@ useEffect(() => {
   return (
     <div className='bg-slate-100'>
        
-      <Items.Provider value={{data, setData,users,setUsers,cartCount,setCartCount,fetchUser,cart,setCart}}>
+      <Items.Provider value={{
+        data,
+        setData,
+        users,
+        setUsers,
+        cartCount,
+        cart,
+        setCart,
+        wishlistCount,
+        updateCartCount,
+        updateWishlistCount,
+        }}>
       
       <Routes>
       

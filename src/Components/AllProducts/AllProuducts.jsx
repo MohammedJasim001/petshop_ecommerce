@@ -1,30 +1,60 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { AddCarts } from "./Addcart";
 import { toast } from "sonner";
 import { Items } from "../MainPage/Main";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
-import { addWishlist, removeWishlist } from "../Wishlist/wishlist";
+import { addWishlist, getWishlist, removeWishlist } from "../Wishlist/wishlist";
 
 const AllProuducts = ({ products }) => {
   const navigate = useNavigate();
   const [wish, setWish] = useState(false);
 
+  const user = localStorage.getItem('user')
+  
+
+  useEffect(()=>{
+    if(user){
+    const checkWishlist = async ()=>{
+      const wishlist =await getWishlist ()
+
+      const isInWishlist = Array.isArray(wishlist) && wishlist.length > 0? wishlist.find(item => item._id === products._id) :null
+      setWish(isInWishlist);
+
+    }
+    checkWishlist()
+    }
+
+  },[products._id])
+  
+
   const wishController = (e) => {
-    !wish ? setWish(true) : setWish(false);
-    !wish ? addWishlist(e):removeWishlist(e)
-  };
+    if(user){
+      if (wish) {
+        removeWishlist(e);
+    } else {
+        addWishlist(e);
+    }
+    setWish(!wish)
+    }
+    else{
+      toast.warning('Please Login')
+    }
+    
+    
+};
+
+  
 
   const handleCarts = async (e) => {
-    await AddCarts(e);
+    user?await AddCarts(e) : toast.warning('Please Login')
   };
   return (
     <div className="w-[200px] md:w-[270px] flex flex-col shadow-lg bg-white p-2 rounded-lg justify-between md:ml-3 mt-10 relative">
-      {/* {!wish?<div onClick={wishController} className="absolute right-3 text-red-600 text-2xl "><CiHeart /></div>:
-      <div onClick={wishController} className="absolute right-3 text-red-600 text-2xl "><FaHeart /></div>
+ 
 
-      } */}
+       
       <div>
         {!wish ? (
           <div
