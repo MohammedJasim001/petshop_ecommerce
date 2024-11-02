@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import api from "../../utils/axiosConfig";
+import { toast } from "sonner";
 
 const UserDetailsModal = ({ isOpen, onClose, user }) => {
   if (!isOpen) return null;
+
+  console.log(user.orders);
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -11,23 +16,23 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
 
         <div className="mb-4">
           <p>
-            <span className="font-semibold">ID:</span> {user.id}
+            <span className="font-semibold">ID:</span> {user._id}
           </p>
           <p>
-            <span className="font-semibold">Name:</span> {user.name}
+            <span className="font-semibold">Name:</span> {user.userName}
           </p>
           <p>
             <span className="font-semibold">Email:</span> {user.email}
           </p>
           <p>
             <span className="font-semibold">Blocked:</span>{" "}
-            {user.blocked ? "Yes" : "No"}
+            {user.isBlocked ? "Yes" : "No"}
           </p>
         </div>
 
-        {user.orderedProducts &&
-        Object.keys(user.orderedProducts).length > 0 ? (
-          Object.keys(user.orderedProducts).map((orderKey, index) => {
+        {user.orders &&
+        user.orders.length > 0 ? (
+          user.orders.map((orderKey, index) => {
             const order = user.orderedProducts[orderKey];
             return (
               <div key={orderKey} className="bg-white p-4 rounded-lg mb-4 ">
@@ -91,7 +96,7 @@ const Users = () => {
 
   const fn = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/users");
+      const response = await api.get("/admin/users/viewusers");
       setUsers(response.data);
     } catch (err) {
       console.log(err);
@@ -100,25 +105,36 @@ const Users = () => {
 
   useEffect(() => {
     fn();
+
   }, []);
 
   const handleUnBlock = async (id) => {
     try {
-      await axios.patch(`http://localhost:3000/users/${id}`, {
-        blocked: false,
-      });
-      fn();
+      await api.put(`/admin/users/unblockuser/${id}`);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === id ? { ...user, isBlocked: false } : user
+        )
+      );
+      toast.success("User unblocked successfully");
     } catch (err) {
       console.log(err);
+      toast.error("Failed to unblock user");
     }
   };
 
   const handleBlock = async (id) => {
     try {
-      await axios.patch(`http://localhost:3000/users/${id}`, { blocked: true });
-      fn();
+      await api.put(`/admin/users/blockuser/${id}`);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === id ? { ...user, isBlocked: true } : user
+        )
+      );
+      toast.success("User blocked successfully");
     } catch (err) {
       console.log(err);
+      toast.error("Failed to block user");
     }
   };
 
@@ -149,18 +165,18 @@ const Users = () => {
         </li>
       </ul>
 
-      {users.map((user) => (
+      {users.map((user,ind) => (
         <div  className="flex items-center justify-between md:justify-around bg-white hover:bg-gray-50 border-b last:border-none py-4 text-xs md:text-sm transition duration-300">
           <div
-            key={user.id}
+            key={ind}
             onClick={() => handleUserClick(user)}
             className="flex items-center justify-between md:justify-around text-xs md:text-sm transition duration-300 w-[100%]"
           >
             <div className="px-2 sm:px-4 py-2 w-[10%] sm:w-[10%] text-center">
-              {user.id}
+              {user._id}
             </div>
             <div className="px-2 md:px-4 py-2 w-[20%] sm:w-[20%] text-center cursor-pointer truncate">
-              {user.name}
+              {user.userName}
             </div>
             <div className="px-2 md:px-4 py-2 w-[30%] text-center truncate">
               {user.email}
@@ -170,16 +186,16 @@ const Users = () => {
           <div className="flex space-x-2 px-2 md:px-4 py-2 justify-center w-[50%] md:w-[20%]">
             {user.admin !== true ? (
               <>
-                {user.blocked ? (
+                {user.isBlocked ? (
                   <button
-                    onClick={() => handleUnBlock(user.id)}
+                    onClick={() => handleUnBlock(user._id)}
                     className="bg-black text-white px-2 md:px-3 py-1 rounded hover:bg-gray-800 transition duration-300"
                   >
                     Unblock
                   </button>
                 ) : (
                   <button
-                    onClick={() => handleBlock(user.id)}
+                    onClick={() => handleBlock(user._id)}
                     className="bg-yellow-500 text-white px-2 md:px-3 py-1 rounded hover:bg-yellow-600 transition duration-300"
                   >
                     Block

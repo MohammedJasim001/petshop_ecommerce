@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import api from "../../utils/axiosConfig";
+import { toast } from "sonner";
 
 const AdminProduct = () => {
   const [data, setData] = useState([]);
@@ -9,10 +11,10 @@ const AdminProduct = () => {
 
   const fn = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/products");
+      const response = await api.get("admin/products/viewproducts");
       setData(response.data);
     } catch (err) {
-      console.log(err);
+      console.log(err,'asdjlfk');
     }
   };
   useEffect(() => {
@@ -34,25 +36,27 @@ const AdminProduct = () => {
     setIsModalOpen(true);
   };
 
+  console.log(editProduct._id);
+  
+
   const handleSaveProduct = async () => {
     try {
-      await axios.put(
-        `http://localhost:3000/products/${editProduct.id}`,
-        editProduct
+      const response = await api.put(`/admin/products/updateproduct/${editProduct._id}`
       );
       setIsModalOpen(false);
+
     } catch (err) {
       console.error(err);
     }
     fn();
   };
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/products/${id}`);
-    } catch (err) {
-      console.error(err);
-    }
-    fn();
+    // try {
+    //   await axios.delete(`http://localhost:3000/products/${id}`);
+    // } catch (err) {
+    //   console.error(err);
+    // }
+    // fn();
   };
 
   const handleOpen = (datas) => {
@@ -61,6 +65,7 @@ const AdminProduct = () => {
 
     setIsOPen(true);
   };
+
   return (
     <div>
       <div>
@@ -78,24 +83,24 @@ const AdminProduct = () => {
               <li className="px-4 py-2  md:w-[20%] text-center mr-8 md:mr-0">Actions</li>
             </ul>
             <div></div>
-            {data.map((product) => (
+            {data.map((product,ind) => (
               <div className="flex items-center justify-around bg-white hover:bg-gray-50 border-b last:border-none py-4 text-sm sm:text-base transition duration-300">
                 <div
                   onClick={() => handleOpen(product)}
-                  key={product.id}
+                  key={ind}
                   className="flex items-center md:justify-around   text-sm sm:text-base transition duration-300 w-[100%]"
                 >
                   <div className="px-4 py-2  md:w-[10%] text-center">
-                    {product.id}
+                    {ind+1}
                   </div>
                   <div className="px-4 py-2 md:w-[30%]  ">
-                    {product.name}
+                    {product.title}
                   </div>
                   <div className="hidden  px-4 py-2 w-[20%] md:flex justify-center">
                     <img
                       className="w-[80px] h-[80px] object-cover rounded"
                       src={product.image}
-                      alt={product.name}
+                      alt={product.title}
                     />
                   </div>
                 </div>
@@ -107,7 +112,7 @@ const AdminProduct = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => handleDelete(product._id)}
                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-300"
                   >
                     Delete
@@ -122,20 +127,20 @@ const AdminProduct = () => {
               <div className="p-4 md:p-8 bg-gray-50">
                 {items.map((datas) => (
                   <div
-                    key={datas.id}
+                    key={datas._id}
                     className="bg-white border border-gray-200 rounded-lg shadow-lg flex flex-col md:flex-row md:mx-20 mx-5 my-5 p-4"
                   >
                     <div className="flex-shrink-0 md:w-[300px]">
                       <img
                         className="w-full h-[300px] object-cover rounded-lg"
                         src={datas.image}
-                        alt={datas.name}
+                        alt={datas.title}
                       />
                     </div>
                     <div className="flex flex-col justify-between p-4 mt-4 md:mt-0 md:ml-10 gap-2">
                       <div>
                         <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-                          {datas.name}
+                          {datas.title}
                         </h1>
                         <p className="text-gray-700 mt-2">
                           {datas.description}
@@ -206,7 +211,7 @@ const AdminProduct = () => {
                   <input
                     type="text"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-gray-100 cursor-not-allowed"
-                    value={editProduct.id}
+                    value={editProduct._id}
                     readOnly
                   />
                 </div>
@@ -218,7 +223,7 @@ const AdminProduct = () => {
                   <input
                     type="text"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    value={editProduct.name}
+                    value={editProduct.title}
                     onChange={(e) =>
                       setEditProduct({ ...editProduct, name: e.target.value })
                     }

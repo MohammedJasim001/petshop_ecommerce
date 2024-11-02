@@ -4,9 +4,10 @@ import { useContext } from "react";
 import { Items } from "../MainPage/Main";
 
 const user = localStorage.getItem('user');
-const userId = JSON.parse(user)
+
 
 export const getWishlist = async () => {
+    const userId = JSON.parse(user)
     try {
         const response = await api.get(`/users/${userId._id}/wishlist`);
         
@@ -19,6 +20,7 @@ export const getWishlist = async () => {
 
 
 export const addWishlist = async (productId)=>{
+    const userId = JSON.parse(user)
     try {
         const response = await api.post(`/users/${userId._id}/wishlist/${productId}`)
         toast.success(response.data.message)
@@ -29,7 +31,7 @@ export const addWishlist = async (productId)=>{
 }
 
 export const removeWishlist = async (productId)=>{
-
+    const userId = JSON.parse(user)
     try {
         const response = await api.delete(`/users/${userId._id}/wishlist/${productId}/removewishlist`)
         toast.success(response.data.message)

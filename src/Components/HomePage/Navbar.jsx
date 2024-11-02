@@ -23,7 +23,7 @@ const Navbar = () => {
 
   const user = localStorage.getItem('user')
   const userDetails = JSON.parse(user)
-  console.log(userDetails.userName);
+ 
 
   useEffect(() => {
     if (user) {
@@ -45,7 +45,7 @@ const Navbar = () => {
       confirmButtonText: "Yes, logout!",
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.clear();
+        localStorage.clear('user');
         setIsLogine(false);
         Swal.fire({
           title: "Logged out!",

@@ -39,22 +39,27 @@ const OrdersPage = () => {
           <div className="flex flex-col gap-6">
             {orders.map((key, index) => {
               return (
-                <div key={index} className="flex justify-around border p-4 rounded-lg shadow-lg">
-                 
-                  <div className="flex flex-col gap-4 w-[70%]">
+                <div key={index} className="flex justify-around border p-4 rounded-lg shadow-lg flex-col">
+                   <div>
+                      {key.purchaseDate}
+                    </div>
+                  <div className="flex flex-col gap-4 md:w-[70%] md:ml-[15%]">
                    {key.productId.map((ele,ind)=>(
                     <div
                      key={ind}
                     className="flex p-4 border rounded-lg shadow justify-between"
                   >
+                   
+                    <div className="">
+                      <img className="w-28" src={ele.image} alt={ele.title} />
+                    </div>
+
                     <div className="">
                       <h2 className="text-2xl font-semibold">{ele.title}</h2>
                       <p>Quantity: {ele.quantity}</p>
                       <p>Price: ${ele.price}</p>
                     </div>
-                    <div className="">
-                      <img className="w-28" src={ele.image} alt={ele.title} />
-                    </div>
+                  
                   </div>
                    ))
   

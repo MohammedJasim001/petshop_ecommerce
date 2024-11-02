@@ -31,12 +31,6 @@ const Registration = () => {
           toast.warning("E-mail already exists");
           return
         } 
-        // else {
-        //   AddPersonTO({ ...input, cart: [] });
-        //   toast.success("Registration Completed");
-        //   navigate("/signin");
-        //   window.location.reload()
-        // }
       } catch (err) {
         console.log(err);
       }
@@ -65,7 +59,7 @@ const Registration = () => {
      toast.success(response.data.message,'success')
      navigate("/signin");
     } catch (error) {
-      toast.warning(error.response.data.message)
+      toast.warning(error.response.data.error)
       console.log(error.response.data.message,'jskljl')
     }
   };
