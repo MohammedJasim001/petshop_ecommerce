@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import api from "../../utils/axiosConfig";
 import { toast } from "sonner";
 
-const UserDetailsModal = ({ isOpen, onClose, user }) => {
-  if (!isOpen) return null;
-
-  console.log(user.orders);
-  
+const UserDetailsModal = ({ isOpen, onClose, userById }) => {
+  if (!isOpen ) return null; 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -16,59 +12,62 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
 
         <div className="mb-4">
           <p>
-            <span className="font-semibold">ID:</span> {user._id}
+            <span className="font-semibold">ID:</span> {userById._id}
           </p>
           <p>
-            <span className="font-semibold">Name:</span> {user.userName}
+            <span className="font-semibold">Name:</span> {userById.userName}
           </p>
           <p>
-            <span className="font-semibold">Email:</span> {user.email}
+            <span className="font-semibold">Email:</span> {userById.email}
           </p>
           <p>
             <span className="font-semibold">Blocked:</span>{" "}
-            {user.isBlocked ? "Yes" : "No"}
+            {userById.isBlocked ? "Yes" : "No"}
           </p>
         </div>
 
-        {user.orders &&
-        user.orders.length > 0 ? (
-          user.orders.map((orderKey, index) => {
-            const order = user.orderedProducts[orderKey];
+        {userById.orders && userById.orders.length > 0 ? (
+          userById.orders.map((value, index) => {
             return (
-              <div key={orderKey} className="bg-white p-4 rounded-lg mb-4 ">
+              <div key={index} className="bg-white p-4 rounded-lg mb-4">
                 <h3 className="text-lg font-semibold mb-3">
                   Order {index + 1}
                 </h3>
 
-                <div className="mb-4  ">
-                  
-                  {order.productData.map((product) => (
-                  <div className="flex  gap-5 justify-between px-5 shadow-lg mt-5 h-40 items-center">
-                      <div key={product.id} className="mb-3 ">
-                      <p>
-                        <span className="font-semibold">Product Name:</span>{" "}
-                        {product.name}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Category:</span>{" "}
-                        {product.category}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Price:</span> $
-                        {product.price}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Count:</span>{" "}
-                        {product.count}
-                      </p>
+                <div className="mb-4">
+                  {value.productId.map((product)=>(
+                    <div
+                      key={product._id}
+                      className="flex gap-5 justify-between px-5 shadow-lg mt-5 h-40 items-center"
+                    >
+                      <div className="mb-3">
+                        <p>
+                          <span className="font-semibold">Product Name:</span>{" "}
+                          {product.title}
+                        </p>
+                        <p>
+                          <span className="font-semibold">Category:</span>{" "}
+                          {product.category}
+                        </p>
+                        <p>
+                          <span className="font-semibold">Price:</span> $
+                          {product.price}
+                        </p>
+                        <p>
+                          <span className="font-semibold">Count:</span>{" "}
+                          {product.quantity}
+                        </p>
+                      </div>
+                      <img
+                        className="w-[100px] shadow-md"
+                        src={product.image}
+                        alt={product.title}
+                      />
                     </div>
-                    <img className="w-[100px] shadow-md"
-                      src={product.image} alt="" />
-                  </div>
                   ))}
+                    
+                  
                 </div>
-
-                
               </div>
             );
           })
@@ -91,10 +90,10 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [userById, setUserById] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fn = async () => {
+  const fetchUsers = async () => {
     try {
       const response = await api.get("/admin/users/viewusers");
       setUsers(response.data);
@@ -104,8 +103,7 @@ const Users = () => {
   };
 
   useEffect(() => {
-    fn();
-
+    fetchUsers();
   }, []);
 
   const handleUnBlock = async (id) => {
@@ -138,44 +136,52 @@ const Users = () => {
     }
   };
 
-  const handleUserClick = (user) => {
-    setSelectedUser(user);
+
+  const handleUserClick = async (user) => {
+    try {
+      const response = await api.get(`/admin/users/viewuserbyid/${user._id}`);
+      setUserById(response.data);
+    } catch (error) {
+      toast.warning(error?.response?.data?.message || "Failed to fetch user details");
+    }
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedUser(null);
+    setUserById(null); 
   };
 
   return (
     <div className="mt-8 w-full">
       <ul className="flex items-center justify-between md:justify-around text-lg font-bold bg-gray-200 h-16 rounded-t-lg">
-        <div className="flex items-center justify-between md:justify-around text-lg font-bold  h-16 rounded-t-lg w-[100%]">
-        <li className=" px-2 md:px-4 py-2 w-[10%] md:w-[10%] text-center">
-          ID
-        </li>
-        <li className="px-2 md:px-4 py-2 w-[20%] md:w-[20%] text-center">
-          Name
-        </li>
-        <li className=" px-2 md:px-4 py-2 w-[30%] text-center">Email</li>
+        <div className="flex items-center justify-between md:justify-around text-lg font-bold h-16 rounded-t-lg w-full">
+          <li className="px-2 md:px-4 py-2 w-[10%] md:w-[10%] text-center">
+            ID
+          </li>
+          <li className="px-2 md:px-4 py-2 w-[20%] md:w-[20%] text-center">
+            Name
+          </li>
+          <li className="px-2 md:px-4 py-2 w-[30%] text-center">Email</li>
         </div>
         <li className="px-2 md:px-4 py-2 w-[50%] md:w-[20%] text-center">
           Actions
         </li>
       </ul>
 
-      {users.map((user,ind) => (
-        <div  className="flex items-center justify-between md:justify-around bg-white hover:bg-gray-50 border-b last:border-none py-4 text-xs md:text-sm transition duration-300">
+      {users.map((user, ind) => (
+        <div
+          key={ind}
+          className="flex items-center justify-between md:justify-around bg-white hover:bg-gray-50 border-b last:border-none py-4 text-xs md:text-sm transition duration-300"
+        >
           <div
-            key={ind}
             onClick={() => handleUserClick(user)}
-            className="flex items-center justify-between md:justify-around text-xs md:text-sm transition duration-300 w-[100%]"
+            className="flex items-center justify-between md:justify-around text-xs md:text-sm transition duration-300 w-full cursor-pointer"
           >
             <div className="px-2 sm:px-4 py-2 w-[10%] sm:w-[10%] text-center">
-              {user._id}
+              {ind}
             </div>
-            <div className="px-2 md:px-4 py-2 w-[20%] sm:w-[20%] text-center cursor-pointer truncate">
+            <div className="px-2 md:px-4 py-2 w-[20%] sm:w-[20%] text-center truncate">
               {user.userName}
             </div>
             <div className="px-2 md:px-4 py-2 w-[30%] text-center truncate">
@@ -185,23 +191,21 @@ const Users = () => {
 
           <div className="flex space-x-2 px-2 md:px-4 py-2 justify-center w-[50%] md:w-[20%]">
             {user.admin !== true ? (
-              <>
-                {user.isBlocked ? (
-                  <button
-                    onClick={() => handleUnBlock(user._id)}
-                    className="bg-black text-white px-2 md:px-3 py-1 rounded hover:bg-gray-800 transition duration-300"
-                  >
-                    Unblock
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleBlock(user._id)}
-                    className="bg-yellow-500 text-white px-2 md:px-3 py-1 rounded hover:bg-yellow-600 transition duration-300"
-                  >
-                    Block
-                  </button>
-                )}
-              </>
+              user.isBlocked ? (
+                <button
+                  onClick={() => handleUnBlock(user._id)}
+                  className="bg-black text-white px-2 md:px-3 py-1 rounded hover:bg-gray-800 transition duration-300"
+                >
+                  Unblock
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleBlock(user._id)}
+                  className="bg-yellow-500 text-white px-2 md:px-3 py-1 rounded hover:bg-yellow-600 transition duration-300"
+                >
+                  Block
+                </button>
+              )
             ) : (
               <div className="bg-blue-500 text-white py-1 px-3 rounded">
                 Main Admin
@@ -213,7 +217,7 @@ const Users = () => {
       <UserDetailsModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        user={selectedUser}
+        userById={userById}
       />
     </div>
   );

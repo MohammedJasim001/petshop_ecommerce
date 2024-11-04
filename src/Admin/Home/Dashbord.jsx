@@ -3,64 +3,65 @@ import { Products } from '../AdminMain/AdminMain';
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import api from '../../utils/axiosConfig';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const Dashboard = () => {
-  const { users } = useContext(Products);
   const [data, setData] = useState([]);
-  const [totalProfit, setTotalProfit] = useState(0);
+  const [users,setUsers] = useState([])
+  const [orders,setOrders] = useState([])
+  const [profit,setProfit] = useState([])
+  const [orderedProducts,setOrderedProducts] = useState([])
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/products");
+      const response = await api.get("/admin/products/viewproducts");
       setData(response.data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  useEffect(() => {
-
-    fetchProducts();
-  
-    const totalProfit = users.reduce((total, user) => {
-      if (user.orderedProducts && Object.keys(user.orderedProducts).length > 0) {
-        const userProfit = Object.keys(user.orderedProducts).reduce((sum, orderKey) => {
-          const order = user.orderedProducts[orderKey];
- 
-          const amount = parseFloat(order.amount);
-          if (!isNaN(amount)) {
-            return sum + order.totalPrice;
-          } else {
-            console.warn(`Invalid amount found in order for user: ${user.name}`, order);
-            return order.totalPrice;
-          }
-
-        }, 0);
-        return total + userProfit;
-      }
-      return total;
-    }, 0);
- 
-  
-    // Update total profit state
-    setTotalProfit(totalProfit);
-  }, [users]);
-  
-  
-  
-
-  // Calculate total orders
-  const totalOrders = users.reduce((acc, user) => {
-    if (user.orderedProducts && Object.keys(user.orderedProducts).length > 0) {
-      return acc + Object.keys(user.orderedProducts).length;
+  const totalUsers = async () =>{
+    try {
+      const response = await api.get('/admin/users/viewusers')
+      setUsers(response.data)
+    } catch (error) {
+      
     }
-    return acc;
-  }, 0);
+  }
+  
+  const totalOrders = async () =>{
+    try {
+      const response = await api.get('/admin/orders/orderdetails')
+      setOrders(response.data)
+    } catch (error) {
+      
+    }
+  }
 
-  const totalUsers = users.filter((user) => !user.admin).length;
+  const totalRevenue = async () =>{
+    try {
+      const response = await api.get('/admin/orders/orderstats')
+      setProfit(response.data.data[0].totalRevenue)
+      setOrderedProducts(response.data.data[0].totalProducts)
+    } catch (error) {
+      
+    }
+  }
+  console.log(orderedProducts)
+  console.log((profit));
+  
+  
 
+  useEffect(() => {
+    totalUsers()
+    fetchProducts()
+    totalOrders()
+    totalRevenue()
+  },[] );
+  
   
   const productChartData = {
     labels: ['Total Products'],
@@ -76,24 +77,31 @@ const Dashboard = () => {
   };
 
   const orderChartData = {
-    labels: ['Total Orders'],
+    labels: ['Total Orders', 'Total Ordered Products'],
     datasets: [
       {
         label: 'Orders',
-        data: [totalOrders],
-        backgroundColor: 'rgba(250, 204, 21, 0.5)', 
-        borderColor: 'rgba(250, 204, 21, 1)',
+        data: [orders.length, orderedProducts], 
+        backgroundColor: [
+          'rgba(215, 204, 21, 0.5)', 
+          'rgba(14, 17, 214, 0.5)',  
+        ],
+        borderColor: [
+          'rgba(250, 204, 21, 1)', 
+          'rgba(14, 17, 214, 1)',  
+        ],
         borderWidth: 1,
       },
     ],
   };
+  
 
   const userChartData = {
     labels: ['Total Users'],
     datasets: [
       {
         label: 'Users',
-        data: [totalUsers],
+        data: [users.length],
         backgroundColor: 'rgba(59, 130, 246, 0.5)', 
         borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 1,
@@ -106,7 +114,7 @@ const Dashboard = () => {
     datasets: [
       {
         label: 'Profit',
-        data: [totalProfit],
+        data: [profit],
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -132,7 +140,8 @@ const Dashboard = () => {
           {/* Total Orders */}
           <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
             <h2 className="text-xl font-semibold text-gray-800">Total Orders</h2>
-            <p className="text-gray-600 mt-2">{totalOrders}</p>
+            <p className="text-gray-600 mt-2">Orders: {orders.length}</p>
+            <p className="text-gray-600 mt-2"> Ordered Products: {orderedProducts}</p>
             <div className="w-full max-w-xs">
               <Pie data={orderChartData} options={{ responsive: true, plugins: { legend: { display: true } } }} />
             </div>
@@ -141,7 +150,7 @@ const Dashboard = () => {
           {/* Total Users */}
           <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
             <h2 className="text-xl font-semibold text-gray-800">Total Users</h2>
-            <p className="text-gray-600 mt-2">{totalUsers}</p>
+            <p className="text-gray-600 mt-2">{users.length}</p>
             <div className="w-full max-w-xs">
               <Bar data={userChartData} options={{ responsive: true, plugins: { legend: { display: true } } }} />
             </div>
@@ -150,7 +159,7 @@ const Dashboard = () => {
           {/* Total Profit */}
           <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
             <h2 className="text-xl font-semibold text-gray-800">Total Profit</h2>
-            <p className="text-gray-600 mt-2">${totalProfit.toFixed(2)}</p>
+            <p className="text-gray-600 mt-2">${profit}</p>
             <div className="w-full max-w-xs">
               <Bar data={profitChartData} options={{ responsive: true, plugins: { legend: { display: true } } }} />
             </div>

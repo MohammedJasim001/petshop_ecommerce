@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router";
 import api from "../../utils/axiosConfig";
 import { toast } from "sonner";
@@ -8,6 +7,8 @@ const AdminProduct = () => {
   const [data, setData] = useState([]);
   const [items, setIteam] = useState([]);
   const [open, setIsOPen] = useState(false);
+  const [image,setimage]=useState(null)
+  const [imagePreview, setImagePreview] = useState(null);
 
   const fn = async () => {
     try {
@@ -23,10 +24,8 @@ const AdminProduct = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState({
-    id: "",
-    name: "",
+    title: "",
     price: "",
-    image: "",
     category: "",
     brand: "",
   });
@@ -34,29 +33,44 @@ const AdminProduct = () => {
   const handleEdit = (product) => {
     setEditProduct(product);
     setIsModalOpen(true);
+    setImagePreview(product.image);
   };
 
   console.log(editProduct._id);
   
 
   const handleSaveProduct = async () => {
-    try {
-      const response = await api.put(`/admin/products/updateproduct/${editProduct._id}`
-      );
-      setIsModalOpen(false);
 
+    const formData=new FormData();
+    formData.append('title',editProduct.title);
+    formData.append('description',editProduct.description);
+    formData.append('price',editProduct.price);
+    formData.append('category',editProduct.category)
+    if(image){
+      formData.append('image',image)
+    }
+
+    try {
+         await api.put(`/admin/products/updateproduct/${editProduct._id}`,formData,{
+        headers:{
+          "Content-Type":'multipart/form-data'
+        }
+      });
+    } 
+    catch (err) {
+      console.error(err.response.data.message);
+    }
+    fn();
+    setIsModalOpen(false);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/admin/products/deleteproduct/${id}`);
     } catch (err) {
       console.error(err);
     }
     fn();
-  };
-  const handleDelete = async (id) => {
-    // try {
-    //   await axios.delete(`http://localhost:3000/products/${id}`);
-    // } catch (err) {
-    //   console.error(err);
-    // }
-    // fn();
   };
 
   const handleOpen = (datas) => {
@@ -65,6 +79,12 @@ const AdminProduct = () => {
 
     setIsOPen(true);
   };
+
+  const handleImageChange=(e)=>{
+    const file = (e.target.files[0]);
+    setimage(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
 
   return (
     <div>
@@ -153,7 +173,7 @@ const AdminProduct = () => {
                             Category:{" "}
                           </span>
                           <span className="font-semibold text-gray-900">
-                            {datas.item}
+                            {datas.category}
                           </span>
                         </div>
                       </div>
@@ -206,18 +226,6 @@ const AdminProduct = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Product ID
-                  </label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-gray-100 cursor-not-allowed"
-                    value={editProduct._id}
-                    readOnly
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
                     Product Name
                   </label>
                   <input
@@ -225,7 +233,7 @@ const AdminProduct = () => {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     value={editProduct.title}
                     onChange={(e) =>
-                      setEditProduct({ ...editProduct, name: e.target.value })
+                      setEditProduct({ ...editProduct, title: e.target.value })
                     }
                   />
                 </div>
@@ -302,7 +310,7 @@ const AdminProduct = () => {
                 <div className="ml-8 flex-shrink-0">
                   <img
                     className="w-48 h-48 object-cover rounded-lg border border-gray-300 shadow-md"
-                    src={editProduct.image}
+                    src={imagePreview}
                     alt="Product"
                   />
                 </div>
@@ -312,15 +320,16 @@ const AdminProduct = () => {
                     Image URL
                   </label>
                   <input
-                    type="text"
+                    type="file"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    value={editProduct.image}
-                    onChange={(e) =>
-                      setEditProduct({
-                        ...editProduct,
-                        image: e.target.value,
-                      })
-                    }
+                    // value={editProduct.image}
+                    // onChange={(e) =>
+                    //   setEditProduct({
+                    //     ...editProduct,
+                    //     image: e.target.value,
+                    //   })
+                    // }
+                    onChange={handleImageChange}
                   />
                 </div>
 

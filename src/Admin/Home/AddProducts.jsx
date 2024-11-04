@@ -2,88 +2,88 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import api from "../../utils/axiosConfig";
 
 const AddProducts = () => {
   const navigate = useNavigate();
 
   const [data, setData] = useState([]);
-
-  const fn = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/products");
-      setData(response.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  useEffect(() => {
-    fn();
-  }, []);
-
+  const [imageView,setImageView] = useState(null)
+  const [image,setImage] = useState(null)
   const [input, setInput] = useState({
-    id: "",
-    name: "",
+    title: "",
     price: "",
     category: "",
-    image: "",
-    brand: "",
     description: "",
-    ratings: "",
-    item: "",
-    qty: "",
+    qty:'',
+    brand:'',
+    ratings:'',
+    item:'',
+    
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setInput({
-      ...input,
-      [name]: value,
-    });
+    setInput((prev) => ({ ...prev, [name]: value }))
+    console.log(`${name}:`,value);
+    
   };
+  
+  const handleImage=(e)=>{
+    const file = e.target.files[0]
+    setImage(file)
+    setImageView(URL.createObjectURL(file))
+  }
 
   const handleSaveProduct = async () => {
-    const { id, name, price, category, image, brand, description, ratings } =
-      input;
+    const {  title, price, category,  description,  } = input;
 
-    const generatedId = id || Date.now().toString();
-
-    const existingProduct = data.find((product) => product.id === generatedId);
-    if (existingProduct) {
-      toast.warning("ID already exists");
-      return;
-    }
 
     if (
-      !name ||
+      !title ||
       !price ||
       !category ||
-      !image ||
-      !brand ||
-      !description ||
-      !ratings
+      !description 
+
     ) {
       toast.warning("Fill the required details.");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("title", input.title);
+    formData.append("description", input.description);
+    formData.append("price", input.price);
+    formData.append("category", input.category);
+    formData.append('qty',input.qty);
+    formData.append('brand',input.brand);
+    formData.append('ratings',input.ratings);
+    formData.append('item',input.item)
+
+    if (image) {
+      formData.append("image", image);
+    }
     try {
-      const response = await axios.post(`http://localhost:3000/products/`, {
-        ...input,
-        id: generatedId,
+        await api.post(`/admin/products/addproducts`,formData,{
+        headers:{
+          "Content-Type":'multipart/form-data'
+        }
       });
-      setData([...data, response.data]);
-      navigate("/admin/products");
-      fn();
+      // setData([...data, response.data]);
       toast.success("Product added");
+      navigate('/admin/products')
     } catch (err) {
-      console.log(err);
+      console.log(err?.response?.data?.message);
     }
   };
 
+
   const handleCancel = ()=>{
     setInput({
-      id:'',name:'',price:'',category:'',image:'',brand:'',description:'',ratings:'',item:'',qty:''
+    title:'',price:'',category:'',brand:'',description:'',ratings:'',item:'',qty:''
     })
+    setImage(null)
+    setImageView(null)
   }
 
   return (
@@ -92,18 +92,6 @@ const AddProducts = () => {
         <div className="flex-1 space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800">Add Product</h2>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Product ID
-            </label>
-            <input
-              type="text"
-              name="id"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={input.id}
-              onChange={handleChange}
-            />
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -111,9 +99,9 @@ const AddProducts = () => {
             </label>
             <input
               type="text"
-              name="name"
+              name="title"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={input.name}
+              value={input.title}
               onChange={handleChange}
             />
           </div>
@@ -174,7 +162,7 @@ const AddProducts = () => {
           <div className="ml-8 flex-shrink-0">
             <img
               className="w-48 h-48 object-cover rounded-lg border border-gray-300 shadow-md"
-              src={input.image}
+              src={imageView}
               alt="Product"
             />
           </div>
@@ -183,11 +171,10 @@ const AddProducts = () => {
               Image URL
             </label>
             <input
-              type="text"
+              type="file"
               name="image"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={input.image}
-              onChange={handleChange}
+              onChange={handleImage}
             />
           </div>
 

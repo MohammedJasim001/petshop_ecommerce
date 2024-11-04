@@ -8,24 +8,7 @@ export const Products =createContext()
 
 const AdminMain = () => {
     const [data,setData]=useState([])
-const [users,setUsers]=useState([])
-
-useEffect(()=>{
-    axios.get('http://localhost:3000/products')
-  
-      .then(res=>{
-        setData(res.data)
-      })
-      .catch(err=>console.log(err))
-
-      axios.get("http://localhost:3000/users")
-      .then(res=>{
-        setUsers(res.data)
-      })
-      .catch(err=>console.log(err))
-  
-  },[])
- 
+const [users,setUsers]=useState([]) 
     
   
   return (
