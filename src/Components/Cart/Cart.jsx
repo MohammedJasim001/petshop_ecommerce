@@ -11,11 +11,11 @@ import api from "../../utils/axiosConfig";
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
+  const {updateCartCount} = useContext(Items)
 
   const handleRemove = async (item) => {
-    await RemovCart(item);
+    await RemovCart(item,updateCartCount);
     setCart((prevCart) => prevCart.filter((cartItem) => cartItem.productId._id !== item.productId._id));
-    console.log(item)
   };
 
 
@@ -26,10 +26,9 @@ const Cart = () => {
     try {
       const response =  await api.get(`/users/${userId}/cart`)
       setCart(response.data);
-      console.log(response.data);
       
     } catch (err) {
-      console.log(err);
+      console.log(err?.response?.data?.message);
     }
   };
 
@@ -67,7 +66,6 @@ const Cart = () => {
       console.log(error.response.data.message)
     }
   }
-  console.log(cart);
 
 const totalPrice = Array.isArray(cart) && cart.length > 0
 ? cart.reduce((acc, item) => acc + item.productId.price * item.quantity, 0)
@@ -76,9 +74,6 @@ const totalPrice = Array.isArray(cart) && cart.length > 0
 const totalItem = Array.isArray(cart) && cart.length > 0
 ? cart.reduce((acc, item) => acc + item.quantity, 0)
 : 0;
-
-
-  console.log(totalItem);
   
 
   return (
@@ -124,7 +119,7 @@ const totalItem = Array.isArray(cart) && cart.length > 0
                           Price :
                         </span>
                         <span className="font-bold text-2xl">
-                          {e.quantity * e.productId.price}$
+                          ₹{e.quantity * e.productId.price}
                         </span>
                       </div>
                       <div>
@@ -137,7 +132,7 @@ const totalItem = Array.isArray(cart) && cart.length > 0
                         <span className="font-serif text-gray-600">
                           Ratings :
                         </span>
-                        <span className="font-semibold">{e.productId.ratings}</span>
+                        <span className="font-semibold">{e.productId.rating}</span>
                       </div>
                     </div>
                     <div>

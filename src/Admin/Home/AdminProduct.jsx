@@ -9,53 +9,76 @@ const AdminProduct = () => {
   const [open, setIsOPen] = useState(false);
   const [image,setimage]=useState(null)
   const [imagePreview, setImagePreview] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editProduct, setEditProduct] = useState({
+    title: "",
+    price: "",
+    category: "",
+    description: "",
+    quantity:'',
+    brand:'',
+    rating:'',
+    productCategory:'',
+    
+  });
 
   const fn = async () => {
     try {
       const response = await api.get("admin/products/viewproducts");
       setData(response.data);
+      setFilteredData(response.data);
     } catch (err) {
-      console.log(err,'asdjlfk');
+      console.log(err);
     }
   };
   useEffect(() => {
     fn();
   }, []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editProduct, setEditProduct] = useState({
-    title: "",
-    price: "",
-    category: "",
-    brand: "",
-  });
+
+
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+    if (event.target.value === "") {
+      setFilteredData(data);
+    } else {
+      const filteredProducts = data.filter((product) =>
+        product.title.toLowerCase().includes(event.target.value.toLowerCase())
+      );
+      setFilteredData(filteredProducts);
+    }
+  };
 
   const handleEdit = (product) => {
     setEditProduct(product);
     setIsModalOpen(true);
     setImagePreview(product.image);
-  };
-
-  console.log(editProduct._id);
-  
+  };  
 
   const handleSaveProduct = async () => {
 
     const formData=new FormData();
-    formData.append('title',editProduct.title);
-    formData.append('description',editProduct.description);
-    formData.append('price',editProduct.price);
-    formData.append('category',editProduct.category)
+    formData.append("title", editProduct.title);
+    formData.append("description", editProduct.description);
+    formData.append("price", editProduct.price);
+    formData.append("category", editProduct.category);
+    formData.append('quantity',editProduct.quantity);
+    formData.append('brand',editProduct.brand);
+    formData.append('rating',editProduct.rating);
+    formData.append('productCategory',editProduct.productCategory)
     if(image){
       formData.append('image',image)
     }
 
     try {
-         await api.put(`/admin/products/updateproduct/${editProduct._id}`,formData,{
+        const response = await api.put(`/admin/products/updateproduct/${editProduct._id}`,formData,{
         headers:{
           "Content-Type":'multipart/form-data'
         }
       });
+      toast.success(response.data.message)
     } 
     catch (err) {
       console.error(err.response.data.message);
@@ -66,7 +89,8 @@ const AdminProduct = () => {
 
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/admin/products/deleteproduct/${id}`);
+      const response = await api.delete(`/admin/products/deleteproduct/${id}`);
+      toast.success(response.data.message)
     } catch (err) {
       console.error(err);
     }
@@ -76,8 +100,8 @@ const AdminProduct = () => {
   const handleOpen = (datas) => {
     setIteam([datas]);
     console.log(datas);
-
     setIsOPen(true);
+    setSearch('')
   };
 
   const handleImageChange=(e)=>{
@@ -88,10 +112,19 @@ const AdminProduct = () => {
 
   return (
     <div>
-      <div>
+      <div >
         {!open ? (
           <div className="mt-8 ">
+            <div className="flex justify-between">
             <h2 className="text-2xl font-semibold text-gray-800">Product List</h2>
+            <input
+                className="border relative md:w-[350px] h-10 rounded-md border-black md:mr-2 pl-3"
+                placeholder="Search product"
+                type="text"
+                value={search}
+                onChange={handleSearch}
+              />
+            </div>
             <ul className="flex items-center justify-around text-lg font-bold bg-gray-200 h-16 rounded-t-lg mt-3">
               <div className="flex items-center md:justify-around text-lg font-bold  h-16 rounded-t-lg w-[100%]">
               <li className="px-4 py-2  md:w-[10%] text-center">ID</li>
@@ -103,11 +136,13 @@ const AdminProduct = () => {
               <li className="px-4 py-2  md:w-[20%] text-center mr-8 md:mr-0">Actions</li>
             </ul>
             <div></div>
-            {data.map((product,ind) => (
-              <div className="flex items-center justify-around bg-white hover:bg-gray-50 border-b last:border-none py-4 text-sm sm:text-base transition duration-300">
+            {filteredData.map((product,ind) => (
+              <div  key={ind} 
+ 
+              className="flex items-center justify-around bg-white hover:bg-gray-50 border-b last:border-none py-4 text-sm sm:text-base transition duration-300">
                 <div
                   onClick={() => handleOpen(product)}
-                  key={ind}
+                 
                   className="flex items-center md:justify-around   text-sm sm:text-base transition duration-300 w-[100%]"
                 >
                   <div className="px-4 py-2  md:w-[10%] text-center">
@@ -165,15 +200,17 @@ const AdminProduct = () => {
                         <p className="text-gray-700 mt-2">
                           {datas.description}
                         </p>
-                        <div className="mt-2">
-                          <span className="text-gray-700">{datas.qty}</span>
+                        {datas.quantity&&(
+                          <div className="mt-2">
+                          <span className="text-gray-700">{datas.quantity}</span>
                         </div>
+                        )}
                         <div className="mt-2">
                           <span className="font-medium text-gray-600">
                             Category:{" "}
                           </span>
                           <span className="font-semibold text-gray-900">
-                            {datas.category}
+                            {datas.productCategory}
                           </span>
                         </div>
                       </div>
@@ -189,7 +226,7 @@ const AdminProduct = () => {
                             Rating:{" "}
                           </span>
                           <span className="text-green-600 ml-2 font-bold">
-                            {datas.ratings} ★
+                            {datas.rating} ★
                           </span>
                         </div>
                         <div className="mt-2">
@@ -197,7 +234,7 @@ const AdminProduct = () => {
                             Price:{" "}
                           </span>
                           <span className="text-2xl font-bold text-gray-900">
-                            ${datas.price}
+                          ₹{datas.price}
                           </span>
                         </div>
                       </div>
@@ -217,8 +254,8 @@ const AdminProduct = () => {
       </div>
       <div>
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto pt-5">
-            <div className="bg-white rounded-lg w-full max-w-4xl p-8 space-y-6 md:flex justify-between shadow-lg gap-2">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto pt-5 ">
+            <div className="bg-white rounded-lg w-full max-w-4xl p-8 space-y-6 md:flex justify-between shadow-lg gap-2 mt-80 md:mt-0">
               <div className="flex-1 space-y-6 ">
                 <h2 className="text-2xl font-semibold text-gray-800">
                   Edit Product
@@ -243,7 +280,7 @@ const AdminProduct = () => {
                     Price
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     value={editProduct.price}
                     onChange={(e) =>
@@ -322,13 +359,7 @@ const AdminProduct = () => {
                   <input
                     type="file"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    // value={editProduct.image}
-                    // onChange={(e) =>
-                    //   setEditProduct({
-                    //     ...editProduct,
-                    //     image: e.target.value,
-                    //   })
-                    // }
+
                     onChange={handleImageChange}
                   />
                 </div>
@@ -338,13 +369,13 @@ const AdminProduct = () => {
                     Rating
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    value={editProduct.ratings}
+                    value={editProduct.rating}
                     onChange={(e) =>
                       setEditProduct({
                         ...editProduct,
-                        ratings: e.target.value,
+                        rating: e.target.value,
                       })
                     }
                   />
@@ -357,9 +388,9 @@ const AdminProduct = () => {
                   <input
                     type="text"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    value={editProduct.item}
+                    value={editProduct.productCategory}
                     onChange={(e) =>
-                      setEditProduct({ ...editProduct, item: e.target.value })
+                      setEditProduct({ ...editProduct, productCategory: e.target.value })
                     }
                   />
                 </div>
@@ -371,9 +402,9 @@ const AdminProduct = () => {
                   <input
                     type="text"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    value={editProduct.qty}
+                    value={editProduct.quantity}
                     onChange={(e) =>
-                      setEditProduct({ ...editProduct, qty: e.target.value })
+                      setEditProduct({ ...editProduct, quantity: e.target.value })
                     }
                   />
                 </div>

@@ -23,7 +23,6 @@ export const Items=createContext()
 
 const Main = () => {
   
-const [refresh,setRefresh] = useState(false)
 const [data,setData]=useState([])
 const [users,setUsers]=useState([])
 const [cart,setCart] = useState([])
@@ -51,15 +50,16 @@ const updateCartCount = async () => {
 useEffect(()=>{
   const products = async () =>{
     try {
-      const response = await axios.get('http://localhost:5000/api/users/products')
+      const response = await api.get('/users/products')
       setData(response.data)
+      updateWishlistCount();
+      updateCartCount();
     } catch (error) {
       console.error('error from fetching product',error)
     }
   }
   products()
-  updateWishlistCount();
-  updateCartCount();
+
 },[setData])
 
 

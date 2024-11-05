@@ -30,9 +30,19 @@ const UserDetailsModal = ({ isOpen, onClose, userById }) => {
           userById.orders.map((value, index) => {
             return (
               <div key={index} className="bg-white p-4 rounded-lg mb-4">
-                <h3 className="text-lg font-semibold mb-3">
+                <h3 className="text-lg font-semibold mb-2">
                   Order {index + 1}
                 </h3>
+                <div>
+                Order Date: 
+                  <span className="font-semibold"> {value.purchaseDate.slice(0,10)}</span>
+                  
+                </div>
+                <div>
+                Total Amount: 
+                  <span className="font-semibold"> ₹{value.totalPrice}</span>
+                   
+                </div>
 
                 <div className="mb-4">
                   {value.productId.map((product)=>(
@@ -50,7 +60,7 @@ const UserDetailsModal = ({ isOpen, onClose, userById }) => {
                           {product.category}
                         </p>
                         <p>
-                          <span className="font-semibold">Price:</span> $
+                          <span className="font-semibold">Price:</span> ₹
                           {product.price}
                         </p>
                         <p>
@@ -179,7 +189,7 @@ const Users = () => {
             className="flex items-center justify-between md:justify-around text-xs md:text-sm transition duration-300 w-full cursor-pointer"
           >
             <div className="px-2 sm:px-4 py-2 w-[10%] sm:w-[10%] text-center">
-              {ind}
+              {ind+1}
             </div>
             <div className="px-2 md:px-4 py-2 w-[20%] sm:w-[20%] text-center truncate">
               {user.userName}

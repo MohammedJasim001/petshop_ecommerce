@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Navbar from "../HomePage/Navbar";
 import Footer from "../HomePage/Footer";
 import api from "../../utils/axiosConfig";
 import { removeWishlist } from "./wishlist";
+import { Items } from "../MainPage/Main";
 
 const Wishlist = () => {
   const [wishItem,setWishItem] = useState([])
+  const {updateWishlistCount} = useContext(Items)
 
   const user = localStorage.getItem('user')
   const userId = JSON.parse(user)._id
@@ -13,7 +15,7 @@ const Wishlist = () => {
   
   console.log(wishItem);
   const handleRemove = async(productId)=>{
-   await removeWishlist(productId)
+   await removeWishlist(productId,updateWishlistCount)
    setWishItem((prevWishItems) =>
     prevWishItems.filter((wish) => wish.productId._id !== productId)
   );
@@ -66,7 +68,7 @@ const Wishlist = () => {
                           Price :
                         </span>
                         <span className="font-bold text-2xl">
-                          {e.quantity * e.productId.price}$
+                         ₹{e.quantity * e.productId.price}
                         </span>
                       </div>
                       <div>
@@ -79,7 +81,7 @@ const Wishlist = () => {
                         <span className="font-serif text-gray-600">
                           Ratings :
                         </span>
-                        <span className="font-semibold">{e.productId.ratings}</span>
+                        <span className="font-semibold">{e.productId.rating}</span>
                       </div>
                     </div>
                     <div>

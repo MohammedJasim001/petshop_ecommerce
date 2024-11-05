@@ -15,27 +15,25 @@ const ProductLists = () => {
   const { id } = useParams();
   const [product,setProduct] = useState([])
   const [wish,setWish] = useState(false)
+  const {updateCartCount,updateWishlistCount} = useContext(Items)
 
   const user = localStorage.getItem('user')
 
 
   const handleCarts = async (e) => {
     if(user){
-      await AddCarts(e);
+      await AddCarts(e,updateCartCount);
     }else{
       toast.warning('Please Login abcdefg')
     }
     
   };
 
-  console.log('Requested ID:', id);
-
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await api.get(`users/products/${id}`);
         setProduct(response.data.product); 
-        console.log(response.data.product,'response')
       } catch (error) {
         console.error('Error fetching product:', error);
       }
@@ -54,14 +52,13 @@ const ProductLists = () => {
     }
 
   }, [id]);
-  console.log(product.title,'akdsjf')
 
   const wishController = (e) => {
     if(user){
       if (wish) {
-        removeWishlist(e);
+        removeWishlist(e,updateWishlistCount);
     } else {
-        addWishlist(e);
+        addWishlist(e,updateWishlistCount);
     }
     setWish(!wish)
     }
@@ -70,7 +67,6 @@ const ProductLists = () => {
     }
   }
 
-  console.log(product._id,id);
   
   return (
     <div>
@@ -109,16 +105,16 @@ const ProductLists = () => {
               
               <div className="text-base font-semibold space-y-2">
              
-                {product.qty && (
+                {product.quantity && (
                   <div>
                     <span className="font-medium text-gray-600">Quantity: </span>
-                    <span className="text-gray-900">{product.qty}</span>
+                    <span className="text-gray-900">{product.quantity}</span>
                   </div>
                 )}
 
                 <div className="text-lg">
                   <span className="font-medium text-gray-600">Category: </span>
-                  <span className="text-gray-900">{product.item}</span>
+                  <span className="text-gray-900">{product.productCategory}</span>
                 </div>
                 <div>
                   <span className="font-medium text-gray-600">Brand: </span>
@@ -127,18 +123,18 @@ const ProductLists = () => {
                 <div className="flex items-center">
                   <span className="font-medium text-gray-600">Rating: </span>
                   <span className="text-green-600 ml-2 font-bold">
-                    {product.ratings} ★
+                    {product.rating} ★
                   </span>
                 </div>
                 <div>
                   <span className="font-medium text-gray-600">Price: </span>
                   <span className="text-2xl font-bold text-gray-900">
-                    ${product.price}
+                    ₹{product.price}
                   </span>
                 </div>
               </div>
 
-              {/* Add to Cart Button */}
+              
               <button
                 onClick={() => handleCarts(product)}
                 className="text-white bg-[#65a30d] hover:bg-[#4d7c0f] py-3 px-6 rounded-md mt-4 w-full transition duration-300 ease-in-out md:w-[25vw]"

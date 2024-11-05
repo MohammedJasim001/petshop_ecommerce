@@ -15,10 +15,10 @@ const AddProducts = () => {
     price: "",
     category: "",
     description: "",
-    qty:'',
+    quantity:'',
     brand:'',
-    ratings:'',
-    item:'',
+    rating:'',
+    productCategory:'',
     
   });
 
@@ -55,10 +55,10 @@ const AddProducts = () => {
     formData.append("description", input.description);
     formData.append("price", input.price);
     formData.append("category", input.category);
-    formData.append('qty',input.qty);
+    formData.append('quantity',input.quantity);
     formData.append('brand',input.brand);
-    formData.append('ratings',input.ratings);
-    formData.append('item',input.item)
+    formData.append('rating',input.rating);
+    formData.append('productCategory',input.productCategory)
 
     if (image) {
       formData.append("image", image);
@@ -80,7 +80,7 @@ const AddProducts = () => {
 
   const handleCancel = ()=>{
     setInput({
-    title:'',price:'',category:'',brand:'',description:'',ratings:'',item:'',qty:''
+    title:'',price:'',category:'',brand:'',description:'',rating:'',productCategory:'',quantity:''
     })
     setImage(null)
     setImageView(null)
@@ -111,7 +111,7 @@ const AddProducts = () => {
               Price
             </label>
             <input
-              type="text"
+              type="number"
               name="price"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               value={input.price}
@@ -183,10 +183,10 @@ const AddProducts = () => {
               Rating
             </label>
             <input
-              type="text"
-              name="ratings"
+              type="number"
+              name="rating"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={input.ratings}
+              value={input.rating}
               onChange={handleChange}
             />
           </div>
@@ -197,9 +197,9 @@ const AddProducts = () => {
             </label>
             <input
               type="text"
-              name="item"
+              name="productCategory"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={input.item}
+              value={input.productCategory}
               onChange={handleChange}
             />
           </div>
@@ -210,9 +210,9 @@ const AddProducts = () => {
             </label>
             <input
               type="text"
-              name="qty"
+              name="quantity"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={input.qty}
+              value={input.quantity}
               onChange={handleChange}
             />
           </div>

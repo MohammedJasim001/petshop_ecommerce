@@ -11,12 +11,10 @@ const OrdersPage = () => {
     const fetchOrders = async () => {
       const user = localStorage.getItem("user");
       const userId = JSON.parse(user)
-      console.log(userId._id);
       
       if (user) {
         try {
           const response = await api.get(`/users/${userId._id}/orders`);
-          console.log(response.data);
           
           setOrders(response.data);          
         } catch (err) {
@@ -28,7 +26,8 @@ const OrdersPage = () => {
 
     fetchOrders();
   }, []);
-  console.log(orders.map(ele=>ele.productId.map(ele=>ele.title)),'sdlkf');
+  
+
   return (
     <div>
       <Navbar />
@@ -40,9 +39,11 @@ const OrdersPage = () => {
             {orders.map((key, index) => {
               return (
                 <div key={index} className="flex justify-around border p-4 rounded-lg shadow-lg flex-col">
-                   <div>
-                      {key.purchaseDate}
+                   <div className="md:ml-20 text-base">
+                    <span>Order Date: </span>
+                      {key.purchaseDate.slice(0,10)}
                     </div>
+                   
                   <div className="flex flex-col gap-4 md:w-[70%] md:ml-[15%]">
                    {key.productId.map((ele,ind)=>(
                     <div
@@ -65,7 +66,12 @@ const OrdersPage = () => {
   
             }
                   </div>
+                  <div className="flex justify-end mt-4 md:mr-10">
+                    <span>Total Amount : ₹</span>
+                      { key.totalPrice}
+                    </div>
                 </div>
+                
               );
             })}
           </div>

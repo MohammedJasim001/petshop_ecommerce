@@ -27,9 +27,6 @@ const SignIn = () => {
         email:signin.email,
         password:signin.password
       })
-      
-       
-      
 
       if(response.status===201){
         const {token,user} = response.data
@@ -44,9 +41,9 @@ const SignIn = () => {
   
           navigate('/admin/users')
         }else{
-          
         navigate('/')
         }
+        window.location.reload();
 
         toast.success(response.data.message)
       }

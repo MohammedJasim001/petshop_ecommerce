@@ -49,11 +49,7 @@ const Dashboard = () => {
     } catch (error) {
       
     }
-  }
-  console.log(orderedProducts)
-  console.log((profit));
-  
-  
+  } 
 
   useEffect(() => {
     totalUsers()

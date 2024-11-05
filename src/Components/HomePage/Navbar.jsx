@@ -14,16 +14,15 @@ import { FaPaw, FaSmile, FaHeart } from "react-icons/fa";
 const Navbar = () => {
   
 
-  const {cartCount,wishlistCount,updateCartCount,updateWishlistCount} = useContext(Items)
+  const {cartCount,wishlistCount,updateCartCount,updateWishlistCount,data} = useContext(Items)
   const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [isLogine, setIsLogine] = useState(false);
   const [isDrop, setIsDrop] = useState(false);
-  const [theUser, setTheUser] = useState([]);
 
   const user = localStorage.getItem('user')
   const userDetails = JSON.parse(user)
- 
+ const admin = localStorage.getItem('admin')
 
   useEffect(() => {
     if (user) {
@@ -31,7 +30,7 @@ const Navbar = () => {
       updateCartCount()
       updateWishlistCount()
     }
-  }, [wishlistCount,cartCount]);
+  }, []);
 
   const handleLogout = () => {
     Swal.fire({
@@ -66,9 +65,19 @@ const Navbar = () => {
     isDrop == false ? setIsDrop(true) : setIsDrop(false);
   };
 
+   const result = data?.products?.filter((item) => {
+    return (
+      input &&
+      item &&
+      item.title &&
+      item.title.toLowerCase().includes(input.toLowerCase())
+    );
+  });
+  
+
   return (
-    <div className=" h-20 md:h-24 bg-black shadow-md text-white">
-      <div className="flex md:justify-around items-center py-5 pr-2 md:mx-36">
+    <div className=" h-20 md:h-24 bg-black shadow-md text-white ">
+      <div className="flex md:justify-around items-center py-5 pr-2 md:mx-36 ">
         <button onClick={() => navigate(-1)} className="flex ">
           <FaPaw className="text-2xl md:text-3xl text-[#5b9e5b] mt-1"/>
           <h1 className=" text-2xl md:text-4xl font-bold text-white pr-2">
@@ -160,7 +169,7 @@ const Navbar = () => {
             </div>
           </div>
           <div>
-            {theUser.admin === true && (
+            {admin && (
               <button
                 onClick={() => navigate(`/admin/users`)}
                 className="bg-blue-600 text-white rounded-lg p-2 text-lg"
@@ -180,7 +189,7 @@ const Navbar = () => {
         </div>
       )}
       <div>
-        {/* <SearchResults results={results} setInput={setInput} /> */}
+        <SearchResults results={result} setInput={setInput} input={input}/>
       </div>
     </div>
   );
