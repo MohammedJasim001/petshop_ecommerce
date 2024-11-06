@@ -7,8 +7,7 @@ import { MdLogout, MdVerified, MdAccountCircle } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
-import icon from "../Assets/icon.png";
-import { FaPaw, FaSmile, FaHeart } from "react-icons/fa";
+import { FaPaw, FaHeart } from "react-icons/fa";
 
 
 const Navbar = () => {

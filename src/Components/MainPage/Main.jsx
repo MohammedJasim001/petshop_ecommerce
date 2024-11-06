@@ -3,12 +3,10 @@ import { Route, Routes } from 'react-router'
 import Home from '../HomePage/Home'
 import Registration from '../Registration/Registration'
 import SignIn from '../Registration/Login'
-import Cart from '../Cart/Cart'
 import Cat from '../ProductsCat/Cat'
 import Dog from '../ProductsDog/Dog'
-import All from '../AllProducts/All'
+
 import ProductLists from '../ProductLists/ProductLists'
-import axios from 'axios'
 import BuyNow from '../Cart/Buy/BuyNow'
 import Orders from '../HomePage/Orders'
 import NonofThis from './NonofThis'
@@ -17,12 +15,15 @@ import Contact from '../HomePage/Pages/Contact'
 import api from '../../utils/axiosConfig'
 import Wishlist from '../Wishlist/wishlistView'
 import { getWishlist } from '../Wishlist/wishlist'
-import { getCart } from '../AllProducts/Addcart'
+import All from '../AllProducts/GetAllProducts'
+import Cart from '../Cart/ViewCart'
+import { getCart } from '../Cart/Addcart'
 
 export const Items=createContext()
 
 const Main = () => {
   
+const [data,setData]=useState([])
 const [users,setUsers]=useState([])
 const [cart,setCart] = useState([])
 const [cartCount, setCartCount] = useState(0);
@@ -46,15 +47,33 @@ const updateCartCount = async () => {
   }
 };
 
+useEffect(()=>{
+  const products = async () =>{
+    try {
+      const response = await api.get(`/users/products`)
+      setData(response.data)
+      updateWishlistCount();
+      updateCartCount();
+    } catch (error) {
+      console.error('error from fetching product',error)
+    }
+  }
+  products()
+
+},[setData])
+
+
+
 
   return (
     <div className='bg-slate-100'>
        
       <Items.Provider value={{
+        data,
+        setData,
         users,
         setUsers,
         cartCount,
-        setCartCount,
         cart,
         setCart,
         wishlistCount,

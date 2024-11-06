@@ -1,10 +1,8 @@
 
 import React, { useContext, useEffect, useState } from 'react'
-import AllProuducts from './AllProuducts'
-import { Items } from '../MainPage/Main'
+import AllProuducts from './ViewAllProuducts'
 import Navbar from '../HomePage/Navbar'
 import Footer from '../HomePage/Footer'
-import axios from 'axios'
 import api from '../../utils/axiosConfig'
 
 const All = () => {

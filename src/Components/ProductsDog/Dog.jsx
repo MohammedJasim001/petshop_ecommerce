@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState} from 'react'
+import React, { useEffect, useState} from 'react'
 
 import DogProducts from './DogProducts'
-import { Items } from '../MainPage/Main'
 import Navbar from '../HomePage/Navbar'
 import Footer from '../HomePage/Footer'
 import dog from '../Assets/dog.webp'

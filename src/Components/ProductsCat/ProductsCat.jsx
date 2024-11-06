@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { AddCarts } from "../AllProducts/Addcart";
+import { AddCarts } from "../Cart/Addcart";
 import { toast } from "sonner";
 import { Items } from "../MainPage/Main";
 import { CiHeart } from "react-icons/ci";

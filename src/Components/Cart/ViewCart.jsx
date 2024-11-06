@@ -1,8 +1,6 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { RemovCart } from "../AllProducts/Addcart";
+import { RemovCart } from "./Addcart";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import Navbar from "../HomePage/Navbar";
 import Footer from "../HomePage/Footer";
 import { Items } from "../MainPage/Main";

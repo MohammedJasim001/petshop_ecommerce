@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AddBuy } from "./BuyNowFunctions";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router";
 import Footer from "../../HomePage/Footer";
 import Navbar from "../../HomePage/Navbar";
 import api from "../../../utils/axiosConfig";
-import { getCart } from "../../AllProducts/Addcart";
 import { Items } from "../../MainPage/Main";
 
 const BuyNow = () => {

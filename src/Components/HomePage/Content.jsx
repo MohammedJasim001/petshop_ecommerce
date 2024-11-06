@@ -3,30 +3,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import cat from "../Assets/catimage.jpg";
 import dog from "../Assets/dogimage.jpg";
-import Products from "./Pages/Products";
+import Products from "./Pages/PopularProducts";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import luxelife from "../Assets/luxelife.webp";
-
-import api from "../../utils/axiosConfig";
+import { Items } from "../MainPage/Main";
 
   const Content = () => {
   const navigate = useNavigate();
-  const [data,setData] = useState([])
-  const limit = 30
-  useEffect(()=>{
-    const products = async () =>{
-      try {
-        const response = await api.get(`/users/products?limit=${limit}`);
-        setData(response?.data?.products)
-
-      } catch (error) {
-        console.error('error from fetching product',error)
-      }
-    }
-    products()
-  
-  },[])  
+  const {data} = useContext(Items)
 
   return (
     <div>
@@ -79,7 +64,7 @@ import api from "../../utils/axiosConfig";
         </div>
 
         <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-6  pt-10 md:mx-10">
-          {data.slice(0, 12).map((product) => (
+          {data?.products?.slice(0, 12).map((product) => (
             <Products key={product._id} product={product} />
           ))}
         </div>
@@ -92,8 +77,7 @@ import api from "../../utils/axiosConfig";
           Trending Now
         </div>
         <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-6  pt-10 md:mx-10 ">
-          {data
-            .filter((ele) => ele.bestseller === true)
+          {data?.products?.filter((ele) => ele.bestseller === true)
             .map((best, index) => (
               <div key={index} className="">
                 <div

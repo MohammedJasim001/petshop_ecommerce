@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { AddCarts } from "../../AllProducts/Addcart";
-import { toast } from "sonner";
+
 
 const Products = ({ product }) => {
   const navigate = useNavigate();
