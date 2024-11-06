@@ -14,7 +14,6 @@ const AllProuducts = ({ products }) => {
 
   const user = localStorage.getItem('user')
   
-
   useEffect(()=>{
     if(user){
     const checkWishlist = async ()=>{
@@ -29,7 +28,6 @@ const AllProuducts = ({ products }) => {
 
   },[products._id])
   
-
   const wishController = (e) => {
     if(user){
       if (wish) {

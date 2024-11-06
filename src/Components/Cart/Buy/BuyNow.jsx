@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AddBuy } from "./BuyNowFunctions";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router";
 import Footer from "../../HomePage/Footer";
 import Navbar from "../../HomePage/Navbar";
 import api from "../../../utils/axiosConfig";
+import { getCart } from "../../AllProducts/Addcart";
+import { Items } from "../../MainPage/Main";
 
 const BuyNow = () => {
   const navigate=useNavigate()
   const location = useLocation();
   const { totalPrice, totalItem, cart } = location.state;
+  const {setCartCount} = useContext(Items)
 
 
   if(totalPrice===null){
@@ -142,6 +145,11 @@ const BuyNow = () => {
           };
           
           const verify = await api.post('/users/verifypayment',paymentData)
+          toast.success(verify.data.message)
+          if(verify.data.success){  
+            navigate('/')
+            setCartCount(0)
+          }
         },
   //saveOrder
 
@@ -156,6 +164,7 @@ const BuyNow = () => {
         theme: {
           color: "#3399cc",
         },
+      
       };
       const rzp1 = new window.Razorpay(options);
       rzp1.on("payment.failed", function (response) {
@@ -170,9 +179,8 @@ const BuyNow = () => {
 
       rzp1.open()
 
-
-     navigate('/')
     } 
+
   };
 
   return (

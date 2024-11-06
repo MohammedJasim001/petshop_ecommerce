@@ -1,14 +1,27 @@
-import React, { useContext} from 'react'
+import React, { useContext, useEffect, useState} from 'react'
 
 import DogProducts from './DogProducts'
 import { Items } from '../MainPage/Main'
 import Navbar from '../HomePage/Navbar'
 import Footer from '../HomePage/Footer'
 import dog from '../Assets/dog.webp'
+import api from '../../utils/axiosConfig'
 
 const Dog = () => {
-  const {data} = useContext(Items)
-  console.log(data);
+    const [data,setData] = useState([])
+
+  const fetchDog = async()=>{
+      try {
+        const response = await api.get(`/users/products/category/${'Dog'}`)
+        setData(response.data.product)
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        
+      }
+  }   
+  useEffect(()=>{
+    fetchDog()
+  },[])
   
   return (
     <div >
@@ -19,7 +32,7 @@ const Dog = () => {
             src={dog} alt="" />
         </div>
     <div className='grid grid-cols-2 md:grid-cols-5 md:pt-10 md:mx-10'>
-      {data?.products?.filter((item)=>item.category==='Dog').map((dogproducts)=>(
+      {data?.map((dogproducts)=>(
         <DogProducts key={dogproducts._id} products={dogproducts}/>
       ))}
     </div>

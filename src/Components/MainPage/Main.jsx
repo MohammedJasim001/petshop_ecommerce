@@ -23,7 +23,6 @@ export const Items=createContext()
 
 const Main = () => {
   
-const [data,setData]=useState([])
 const [users,setUsers]=useState([])
 const [cart,setCart] = useState([])
 const [cartCount, setCartCount] = useState(0);
@@ -47,33 +46,15 @@ const updateCartCount = async () => {
   }
 };
 
-useEffect(()=>{
-  const products = async () =>{
-    try {
-      const response = await api.get('/users/products')
-      setData(response.data)
-      updateWishlistCount();
-      updateCartCount();
-    } catch (error) {
-      console.error('error from fetching product',error)
-    }
-  }
-  products()
-
-},[setData])
-
-
-
 
   return (
     <div className='bg-slate-100'>
        
       <Items.Provider value={{
-        data,
-        setData,
         users,
         setUsers,
         cartCount,
+        setCartCount,
         cart,
         setCart,
         wishlistCount,

@@ -18,7 +18,7 @@ const OrdersPage = () => {
           
           setOrders(response.data);          
         } catch (err) {
-          console.error(err.response.data.message);
+          console.error(err?.response?.data?.message);
           toast.error("Failed to fetch orders.");
         }
       }
@@ -26,62 +26,48 @@ const OrdersPage = () => {
 
     fetchOrders();
   }, []);
-  
+ 
 
   return (
     <div>
-      <Navbar />
-
-      <div className="container mx-auto p-4 min-h-screen">
-        <h1 className="text-3xl font-bold mb-6">My Orders</h1>
-        {orders.length > 0 ? (
-          <div className="flex flex-col gap-6">
-            {orders.map((key, index) => {
-              return (
-                <div key={index} className="flex justify-around border p-4 rounded-lg shadow-lg flex-col">
-                   <div className="md:ml-20 text-base">
-                    <span>Order Date: </span>
-                      {key.purchaseDate.slice(0,10)}
-                    </div>
-                   
-                  <div className="flex flex-col gap-4 md:w-[70%] md:ml-[15%]">
-                   {key.productId.map((ele,ind)=>(
-                    <div
-                     key={ind}
-                    className="flex p-4 border rounded-lg shadow justify-between"
-                  >
-                   
-                    <div className="">
-                      <img className="w-28" src={ele.image} alt={ele.title} />
-                    </div>
-
-                    <div className="">
-                      <h2 className="text-2xl font-semibold">{ele.title}</h2>
-                      <p>Quantity: {ele.quantity}</p>
-                      <p>Price: ${ele.price}</p>
-                    </div>
-                  
-                  </div>
-                   ))
-  
-            }
-                  </div>
-                  <div className="flex justify-end mt-4 md:mr-10">
-                    <span>Total Amount : ₹</span>
-                      { key.totalPrice}
-                    </div>
-                </div>
+    <Navbar />
+    <div className="container mx-auto p-4 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">My Orders</h1>
+      {orders.length > 0 ? (
+        <div className="flex flex-col gap-6">
+          {orders?.map((order, index) => (
+            <div key={index} className="flex flex-col border p-4 rounded-lg shadow-lg">
+              <div className="md:ml-20 text-base">
+              Order Date: 
+                <span className="font-semibold"> {order.purchaseDate.slice(0,10)}</span>
                 
-              );
-            })}
-          </div>
-        ) : (
-          <p>No orders found.</p>
-        )}
-      </div>
-
-      <Footer />
+              </div>
+              <div className="flex flex-col gap-4 md:w-[70%] md:ml-[15%]">
+                {order?.products?.map((productItem, ind) => (
+                  <div key={ind} className="flex p-4 border rounded-lg shadow justify-between">
+                    <div className="">
+                      <img className="w-28 h-28" src={productItem.productId.image} alt={productItem.productId.title} />
+                    </div>
+                    <div className="">
+                      <h2 className="text-lg md:text-2xl font-semibold">{productItem.productId.title}</h2>
+                      <p>Quantity: {productItem.quantity}</p>
+                      <p>Price: ₹{productItem.productId.price * productItem.quantity}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-end mt-4 md:mr-10">
+                Total Amount: ₹<span className="font-semibold">{order.totalPrice}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>No orders found.</p>
+      )}
     </div>
+    <Footer />
+  </div>
   );
 };
 

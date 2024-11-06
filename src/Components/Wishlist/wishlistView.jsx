@@ -11,9 +11,7 @@ const Wishlist = () => {
 
   const user = localStorage.getItem('user')
   const userId = JSON.parse(user)._id
-  console.log();
   
-  console.log(wishItem);
   const handleRemove = async(productId)=>{
    await removeWishlist(productId,updateWishlistCount)
    setWishItem((prevWishItems) =>
@@ -26,9 +24,8 @@ const Wishlist = () => {
     try {
         const response = await api.get(`/users/${userId}/wishlist`)
         setWishItem(response.data)
-        console.log(response.data)
     } catch (error) {
-        console.log(error.response.data.message)
+        console.log(error?.response?.data?.message)
     }    
   }
 
@@ -37,7 +34,6 @@ const Wishlist = () => {
 
   },[])
 
-  console.log(wishItem)
 
   return (
     <div>

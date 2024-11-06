@@ -99,7 +99,6 @@ const AdminProduct = () => {
 
   const handleOpen = (datas) => {
     setIteam([datas]);
-    console.log(datas);
     setIsOPen(true);
     setSearch('')
   };

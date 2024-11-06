@@ -27,7 +27,7 @@ const UserDetailsModal = ({ isOpen, onClose, userById }) => {
         </div>
 
         {userById.orders && userById.orders.length > 0 ? (
-          userById.orders.map((value, index) => {
+          userById?.orders?.map((value, index) => {
             return (
               <div key={index} className="bg-white p-4 rounded-lg mb-4">
                 <h3 className="text-lg font-semibold mb-2">
@@ -45,7 +45,7 @@ const UserDetailsModal = ({ isOpen, onClose, userById }) => {
                 </div>
 
                 <div className="mb-4">
-                  {value.productId.map((product)=>(
+                  {value.products.map((product)=>(
                     <div
                       key={product._id}
                       className="flex gap-5 justify-between px-5 shadow-lg mt-5 h-40 items-center"
@@ -53,15 +53,15 @@ const UserDetailsModal = ({ isOpen, onClose, userById }) => {
                       <div className="mb-3">
                         <p>
                           <span className="font-semibold">Product Name:</span>{" "}
-                          {product.title}
+                          {product.productId.title}
                         </p>
                         <p>
                           <span className="font-semibold">Category:</span>{" "}
-                          {product.category}
+                          {product.productId.category}
                         </p>
                         <p>
                           <span className="font-semibold">Price:</span> ₹
-                          {product.price}
+                          {product.productId.price*product.quantity}
                         </p>
                         <p>
                           <span className="font-semibold">Count:</span>{" "}
@@ -70,8 +70,8 @@ const UserDetailsModal = ({ isOpen, onClose, userById }) => {
                       </div>
                       <img
                         className="w-[100px] shadow-md"
-                        src={product.image}
-                        alt={product.title}
+                        src={product.productId.image}
+                        alt={product.productId.title}
                       />
                     </div>
                   ))}
@@ -115,6 +115,8 @@ const Users = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  
 
   const handleUnBlock = async (id) => {
     try {

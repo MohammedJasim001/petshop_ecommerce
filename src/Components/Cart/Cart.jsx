@@ -21,7 +21,7 @@ const Cart = () => {
 
   const user = localStorage.getItem('user')
   const userId = JSON.parse(user)._id
-  const fetchUser = async () => {
+  const fetchCart = async () => {
     
     try {
       const response =  await api.get(`/users/${userId}/cart`)
@@ -33,7 +33,7 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    fetchUser();
+    fetchCart();
   },[]);
 
   const clickIncrease = async(item)=>{

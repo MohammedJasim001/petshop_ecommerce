@@ -45,8 +45,6 @@ const AllProuducts = ({ products }) => {
     
 };
 
-  
-
   const handleCarts = async (e) => {
     user?await AddCarts(e,updateCartCount) : toast.warning('Please Login')
   };

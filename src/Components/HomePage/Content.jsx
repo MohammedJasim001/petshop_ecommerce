@@ -4,33 +4,29 @@ import { Link, useNavigate } from "react-router-dom";
 import cat from "../Assets/catimage.jpg";
 import dog from "../Assets/dogimage.jpg";
 import Products from "./Pages/Products";
-import { Items } from "../MainPage/Main";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import luxelife from "../Assets/luxelife.webp";
-import catmain from "../Assets/catmain.webp";
-import dogmain from "../Assets/dogmain.webp";
-import axios from "axios";
+
 import api from "../../utils/axiosConfig";
 
-const Content = () => {
+  const Content = () => {
   const navigate = useNavigate();
   const [data,setData] = useState([])
+  const limit = 30
   useEffect(()=>{
     const products = async () =>{
       try {
-        const response = await api.get('/users/products');
-
+        const response = await api.get(`/users/products?limit=${limit}`);
         setData(response?.data?.products)
-        //  setData(Object.values(response.data.products || {}));
+
       } catch (error) {
         console.error('error from fetching product',error)
       }
     }
     products()
   
-  },[])
-  
+  },[])  
 
   return (
     <div>
