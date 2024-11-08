@@ -8,9 +8,6 @@ import { lazy, useEffect, useState } from 'react';
 const Admins = lazy(()=>import('./Admin/AdminMain/AdminMain'))
 
 
-
-
-
 function App() {
 
   const [adm,setAdm]=useState()
@@ -32,8 +29,8 @@ function App() {
   }}/>
 {adm &&
     <Admins/> }
-    
-      <Main/>
+         
+    <Main/>
      
      
     </div>

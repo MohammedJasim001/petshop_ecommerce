@@ -5,22 +5,39 @@ import Navbar from '../HomePage/Navbar'
 import Footer from '../HomePage/Footer'
 import dog from '../Assets/dog.webp'
 import api from '../../utils/axiosConfig'
+import { getWishlist } from '../Wishlist/wishlist'
 
 const Dog = () => {
     const [data,setData] = useState([])
+    const [wishlist, setWishlist] = useState([]);
 
-  const fetchDog = async()=>{
-      try {
-        const response = await api.get(`/users/products/category/${'Dog'}`)
-        setData(response.data.product)
-      } catch (error) {
-        console.log(error?.response?.data?.message);
-        
-      }
-  }   
-  useEffect(()=>{
-    fetchDog()
-  },[])
+    const user = localStorage.getItem('user')
+
+    useEffect(() => {
+      const fetchCat = async () => {
+        try {
+          const res = await api.get(`/users/products/category/dog`);
+          setData(res.data.product);
+        } catch (error) {
+          console.error('Error fetching products:', error?.response?.data?.message);
+        }
+      };
+  
+      const fetchWishlist = async () => {
+        if (user) {
+          try {
+            const wishlists = await getWishlist();
+            setWishlist(wishlists);
+          } catch (error) {
+            console.error('Error fetching wishlist:', error);
+          }
+        }
+      };
+  
+      fetchCat();        
+      fetchWishlist();   
+  
+    }, [user]);
   
   return (
     <div >
@@ -32,7 +49,7 @@ const Dog = () => {
         </div>
     <div className='grid grid-cols-2 md:grid-cols-5 md:pt-10 md:mx-10'>
       {data?.map((dogproducts)=>(
-        <DogProducts key={dogproducts._id} products={dogproducts}/>
+        <DogProducts key={dogproducts._id} products={dogproducts} wish={wishlist.some(item => item._id === dogproducts._id)}/>
       ))}
     </div>
       <Footer/>

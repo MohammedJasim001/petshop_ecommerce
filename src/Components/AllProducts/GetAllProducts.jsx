@@ -4,11 +4,13 @@ import AllProuducts from './ViewAllProuducts'
 import Navbar from '../HomePage/Navbar'
 import Footer from '../HomePage/Footer'
 import api from '../../utils/axiosConfig'
+import { getWishlist } from '../Wishlist/wishlist'
 
 const All = () => {
  
 
   const [data, setData] = useState([]);
+  const [wishlist, setwishlist] = useState([]);
   const [currentPage,setCurrentPage] = useState(1)
   const [totalPages,setTotalPages] = useState(1)
   const limit = 10
@@ -37,14 +39,26 @@ const All = () => {
       setCurrentPage((page)=> page - 1)
     }
   }
- 
+  const user = localStorage.getItem('user')
+
+  useEffect(()=>{
+    if(user){
+    const checkWishlist = async ()=>{
+      const wishlists =await getWishlist (); 
+      setwishlist(wishlists)
+
+    }
+    checkWishlist()
+    }
+
+  },[])
   return (
     <div>
       <Navbar/>
       <h1 className="mb-2 text-3xl font-bold tracking-tight md:ml-10 mt-5">All Products</h1>
       <div className="grid grid-cols-2 md:grid-cols-5 md:pt-10 md:mx-10">
-                {data.map((products,i) => (
-                    <AllProuducts key={i} products={products} />
+                {data?.map((products,i) => (
+                    <AllProuducts key={i} products={products}   wish={wishlist.some(item => item._id === products._id)} />
                 ))}
 
                 

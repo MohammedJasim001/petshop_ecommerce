@@ -12,7 +12,7 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { Products } from "../AdminMain/AdminMain";
 import { CiLogout } from "react-icons/ci";
 import { RiUserSharedLine } from "react-icons/ri";
-import api from "../../utils/axiosConfig";
+import AdminNonofThis from "../AdminMain/AdminErrorPage";
 
 const AdminHome = () => {
 
@@ -97,7 +97,7 @@ const AdminHome = () => {
           ) : url === "addproducts" ? (
             <AddProducts />
           ) : (
-            <div>404 error....</div>
+            <div><AdminNonofThis/></div>
           )}
         </div>
 

@@ -74,6 +74,7 @@ useEffect(()=>{
         users,
         setUsers,
         cartCount,
+        setCartCount,
         cart,
         setCart,
         wishlistCount,
@@ -93,7 +94,7 @@ useEffect(()=>{
         <Route path='/allproducts' element={<All/>}/>
         <Route path='/productdetails/:id' element={<ProductLists/>}/>
         <Route path='/buynow' element={<BuyNow/>}/>
-        <Route path='/orders' element={<Orders/>}/>
+        <Route path='/orders' element={<Orders/>}/>       
         <Route path='*' element={<NonofThis/>}/>
         <Route path='/about' element={<About/>}/>
         <Route path='/contact' element={<Contact/>}/>

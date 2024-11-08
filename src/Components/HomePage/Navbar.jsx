@@ -26,8 +26,7 @@ const Navbar = () => {
   useEffect(() => {
     if (user) {
       setIsLogine(true);
-      updateCartCount()
-      updateWishlistCount()
+
     }
   }, []);
 

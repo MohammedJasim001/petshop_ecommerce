@@ -25,7 +25,6 @@ const AddProducts = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }))
-    console.log(`${name}:`,value);
     
   };
   

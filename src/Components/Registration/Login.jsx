@@ -49,7 +49,9 @@ const SignIn = () => {
       }
 
     } catch (err) {
-      toast.warning(err.response.data.message)
+      toast.warning(err?.response?.data?.error)
+      console.log(err?.response?.data?.error)
+      console.log(err?.response?.data?.message)
     }
   };
 

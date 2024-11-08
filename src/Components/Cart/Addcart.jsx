@@ -6,7 +6,7 @@ const userId =JSON.parse(user);
 
 export const getCart = async () => {
   try {
-    if(!user) return toast.warning('Plss login')
+    // if(!user) return toast.warning('Plss login')
     const response = await api.get(`/users/${userId._id}/cart`)
       return response.data
  

@@ -11,11 +11,6 @@ const BuyNow = () => {
   const location = useLocation();
   const { totalPrice, totalItem, cart } = location.state;
   const {setCartCount} = useContext(Items)
-
-
-  if(totalPrice===null){
-    navigate('*')
-  }
   
   
   const [formData, setFormData] = useState({
@@ -214,7 +209,7 @@ const BuyNow = () => {
             Mobile Number:
           </label>
           <input
-            type="text"
+            type="number"
             name="mobilenumber"
             value={formData.mobilenumber}
             onChange={handleChange}
@@ -231,7 +226,7 @@ const BuyNow = () => {
             Pincode:
           </label>
           <input
-            type="text"
+            type="number"
             name="pincode"
             value={formData.pincode}
             onChange={handleChange}

@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import axios from "axios";
 
 const Registration = () => {
-  const { users } = useContext(Items);
   const navigate = useNavigate();
+  const [isLoading,setIsLoading] = useState(false)
   const [input, setInput] = useState({
     userName: "",
     email: "",
@@ -22,20 +22,16 @@ const Registration = () => {
     
    
     e.preventDefault();
-    setFormErrors(validate(input));
+    const errors = validate(input)
+    setFormErrors(errors);
     setIsSubmit(true);
-    if (Object.keys(formErrors).length === 0 && isSubmit) {
-      try {
-        const user = users.find((e) => e.email === input.email);
-        if (user) {
-          toast.warning("E-mail already exists");
-          return
-        } 
-      } catch (err) {
-        console.log(err);
-      }
-    }
 
+    if (Object.keys(errors).length !== 0) {
+      return; 
+    }
+    setIsLoading(true)
+    console.log();
+    
     
     const formData = new FormData();
     formData.append("userName", input.userName);
@@ -59,13 +55,16 @@ const Registration = () => {
      toast.success(response.data.message,'success')
      navigate("/signin");
     } catch (error) {
-      toast.warning(error.response.data.error)
-      console.log(error.response.data.message,'jskljl')
+      toast.warning(error?.response?.data?.message)
+      console.log(error.response.data.message)
+    }
+    finally{
+      setIsLoading(false)
     }
   };
 
   const handleProfile = (e)=>{
-    setProfileImage(e.target.files)
+    setProfileImage(e.target.files[0])
   }
 
   const handleChange = (e) => {
@@ -162,9 +161,10 @@ const Registration = () => {
        
 
         <button className="bg-blue-500 text-white py-3 w-full rounded-lg hover:bg-blue-600 transition duration-300">
-          Submit
+          {isLoading?"Loading....":"Submit"}
         </button>
       </form>
+
     </div>
   );
 };
